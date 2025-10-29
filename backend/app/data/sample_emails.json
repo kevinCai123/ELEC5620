@@ -1,0 +1,37 @@
+[
+  {
+    "id": "1",
+    "subject": "Project Meeting Reminder",
+    "sender": "professor@example.com",
+    "body": "Hi team, remember tomorrow's project sync at 10am. We'll review milestones and blockers. Please bring updated slides.",
+    "original_url": "https://mail.example.com/message/1"
+  },
+  {
+    "id": "2",
+    "subject": "Lab Access Update",
+    "sender": "labadmin@example.com",
+    "body": "Access to the electronics lab is limited next week due to maintenance. Book slots early and follow safety guidelines.",
+    "original_url": "https://mail.example.com/message/2"
+  },
+  {
+    "id": "3",
+    "subject": "Scholarship Opportunity",
+    "sender": "scholarships@example.com",
+    "body": "Applications for the innovation scholarship close Friday. Submit your proposal and reference letters through the portal.",
+    "original_url": "https://mail.example.com/message/3"
+  },
+  {
+    "id": "4",
+    "subject": "Guest Lecture Series",
+    "sender": "events@example.com",
+    "body": "Join the smart cities lecture on Thursday at the auditorium. Register to secure seating and bring your student ID.",
+    "original_url": "https://mail.example.com/message/4"
+  },
+  {
+    "id": "5",
+    "subject": "Group Assignment Feedback",
+    "sender": "tutor@example.com",
+    "body": "Feedback for Assignment 1 is now available in Moodle. Review comments on sections 2 and 3 to improve clarity.",
+    "original_url": "https://mail.example.com/message/5"
+  }
+]

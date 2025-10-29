@@ -1,0 +1,47 @@
+[
+  {
+    "id": "library",
+    "name": "Main Campus Library",
+    "description": "Quiet study spaces and research support",
+    "aliases": ["library", "info commons"],
+    "tags": ["study", "resources"],
+    "latitude": -33.9173,
+    "longitude": 151.2313
+  },
+  {
+    "id": "engineering",
+    "name": "Engineering Building",
+    "description": "Labs and lecture theatres for engineering",
+    "aliases": ["eng", "engineering faculty"],
+    "tags": ["lectures", "labs"],
+    "latitude": -33.9175,
+    "longitude": 151.2306
+  },
+  {
+    "id": "food-court",
+    "name": "Campus Food Court",
+    "description": "Variety of food options and seating",
+    "aliases": ["food", "canteen"],
+    "tags": ["food", "social"],
+    "latitude": -33.9169,
+    "longitude": 151.2301
+  },
+  {
+    "id": "gym",
+    "name": "Sports & Aquatic Centre",
+    "description": "Gym, pool, and group classes",
+    "aliases": ["sports centre", "gym"],
+    "tags": ["fitness", "sports"],
+    "latitude": -33.9182,
+    "longitude": 151.2325
+  },
+  {
+    "id": "innovation",
+    "name": "Innovation Hub",
+    "description": "Co-working and startup support",
+    "aliases": ["hub", "startup space"],
+    "tags": ["innovation", "coworking"],
+    "latitude": -33.9189,
+    "longitude": 151.2298
+  }
+]

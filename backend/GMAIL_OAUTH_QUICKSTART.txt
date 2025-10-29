@@ -1,0 +1,43 @@
+═══════════════════════════════════════════════════════════════════════════
+GOOGLE OAUTH SETUP - QUICK START
+═══════════════════════════════════════════════════════════════════════════
+
+✅ Dependencies installed!
+
+NEXT STEPS:
+
+1️⃣  Get Google OAuth Credentials
+   Go to: https://console.cloud.google.com/
+   - Create project
+   - Enable Gmail API
+   - Create OAuth Client ID (Desktop app)
+   - Copy Client ID and Client Secret
+
+2️⃣  Run Setup Script
+   cd backend
+   python setup_google_oauth.py
+
+3️⃣  Follow the prompts:
+   - Enter your Client ID
+   - Enter your Client Secret
+   - Browser will open - authorize the app
+   - Script will save refresh token to .env
+
+4️⃣  Restart Backend
+   python -m uvicorn app.main:app --reload
+
+5️⃣  Test It!
+   Open: http://localhost:5173/emails
+   You should see real emails from your Gmail!
+
+═══════════════════════════════════════════════════════════════════════════
+
+FULL GUIDE: See docs/GOOGLE_OAUTH_SETUP.md
+
+TROUBLESHOOTING:
+- "Access blocked" → Add yourself as Test User in OAuth consent screen
+- "redirect_uri_mismatch" → Add http://localhost:8080/ to redirect URIs
+- Still using sample emails → Check .env has all 3 Google values, restart backend
+
+═══════════════════════════════════════════════════════════════════════════
+
