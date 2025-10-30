@@ -10,6 +10,7 @@ import dateparser
 from pydantic import BaseModel, Field
 from rapidfuzz import fuzz
 
+from langchain_core.documents import Document
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableSerializable
@@ -511,3 +512,4 @@ Input state: {truncated_notice}"""
 
 
 __all__ = ["LLMService", "LLMResult", "EmailAnalysis"]
+
