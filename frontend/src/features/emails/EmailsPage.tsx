@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Skeleton } from '../../components/ui/skeleton';
 import { apiClient } from '../../api/client';
 
-export const EMAILS_QUERY_KEY = ['emails', 'top'] as const;
+const EMAILS_QUERY_KEY = ['emails', 'top'] as const;
 
 type EmailSummary = {
   id: string;

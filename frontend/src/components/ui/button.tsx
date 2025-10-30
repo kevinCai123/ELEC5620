@@ -5,7 +5,7 @@ import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 import { cn } from '../../lib/utils';
 
-export const buttonVariants = cva(
+const buttonVariants = cva(
   'group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-pill px-5 py-2.5 text-sm font-semibold transition duration-200 ease-aurora focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-60',
   {
     variants: {
