@@ -45,7 +45,8 @@ jobs:
       - name: Install dependencies
         run: |
           poetry env use "$(command -v python)"
-          poetry install --no-interaction --sync
+          poetry lock --no-interaction
+          poetry sync --no-interaction
 
       - name: Check project metadata
         run: poetry check
