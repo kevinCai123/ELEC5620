@@ -47,7 +47,7 @@ export function SummarizePage() {
   const mutation = useMutation({
     mutationFn: async () => {
       const response = (await apiClient.POST('/study/summarize', {
-        body: { text: text || undefined, url: url || undefined },
+        body: { text: text || undefined, url: url || undefined, user_request: null },
       })) as ApiResult<SummarizeResponse>;
       if (response.error) {
         throw new Error(response.error.detail ?? 'Failed to summarise content');

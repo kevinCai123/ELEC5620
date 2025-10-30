@@ -322,7 +322,7 @@ export function EmailsPage() {
                     {/* Open Original Link */}
                     {selectedEmail.original_url && (
                       <div className="flex justify-end border-t border-white/10 pt-4">
-                        <Button asChild variant="default">
+                        <Button asChild variant="primary">
                           <a
                             href={selectedEmail.original_url}
                             target="_blank"
