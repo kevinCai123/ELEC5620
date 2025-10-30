@@ -12,7 +12,6 @@ from app.core.config import get_settings
 from app.models import Todo
 from app.schemas.todo import TodoCreateItem, TodoDraft, TodoResponse
 from app.services.llm import LLMService
-from app.utils.time import utc_now
 from app.utils.metrics import emit_metric, time_metric
 
 _SETTINGS = get_settings()

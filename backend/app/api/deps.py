@@ -3,8 +3,6 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from functools import lru_cache
 
-from fastapi import Depends
-
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_session

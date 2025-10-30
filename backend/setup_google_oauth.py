@@ -17,8 +17,6 @@ print("=" * 70)
 # Check dependencies
 try:
     from google_auth_oauthlib.flow import InstalledAppFlow
-    from google.auth.transport.requests import Request
-    from google.oauth2.credentials import Credentials
 except ImportError:
     print("\n[ERROR] Missing required packages!")
     print("\nInstall them with:")
@@ -126,7 +124,7 @@ if not env_file.exists():
     print("\n[WARNING] .env file not found. Creating new one...")
     env_content = ""
 else:
-    print(f"\n[INFO] Reading existing .env file...")
+    print("\n[INFO] Reading existing .env file...")
     env_content = env_file.read_text()
 
 # Prepare new values

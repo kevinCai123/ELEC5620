@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 from zoneinfo import ZoneInfo
 
 import sentry_sdk
@@ -13,8 +12,6 @@ from app.api.deps import get_digest_service
 from app.core.config import get_settings
 from app.core.logging import RequestLoggingMiddleware, configure_logging
 from app.db.session import get_session
-from app.services.digest import DigestService
-
 try:
     from apscheduler.schedulers.asyncio import AsyncIOScheduler
 except ImportError as exc:  # pragma: no cover
