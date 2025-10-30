@@ -1,12 +1,19 @@
 from __future__ import annotations
 
 import asyncio
+import os
 from collections.abc import AsyncIterator, Generator
 
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.db.base import Base
+
+# Set up minimal environment variables required for settings
+# This must happen before any app code imports settings
+os.environ.setdefault("DATABASE_URL", "sqlite+aiosqlite:///:memory:")
+os.environ.setdefault("OPENAI_API_KEY", "test-key")
+os.environ.setdefault("OPENWEATHER_API_KEY", "test-key")
 
 
 @pytest.fixture(scope="session")
