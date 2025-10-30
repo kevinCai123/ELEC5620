@@ -28,7 +28,22 @@ class EmailService:
     def _load_sample_emails(self) -> list[dict[str, str | None]]:
         data_path = Path(__file__).resolve().parent.parent / "data" / "sample_emails.json"
         with data_path.open("r", encoding="utf-8") as fh:
-            return json.load(fh)
+            data = json.load(fh)
+        if not isinstance(data, list):
+            return []
+        normalized: list[dict[str, str | None]] = []
+        for entry in data:
+            if isinstance(entry, dict):
+                normalized.append(
+                    {
+                        "id": str(entry.get("id", "")),
+                        "subject": entry.get("subject"),
+                        "sender": entry.get("sender"),
+                        "body": entry.get("body"),
+                        "original_url": entry.get("original_url"),
+                    }
+                )
+        return normalized
 
     def _init_gmail_client(self) -> GmailClient | None:
         try:

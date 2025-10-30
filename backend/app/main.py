@@ -25,7 +25,7 @@ except ImportError as exc:  # pragma: no cover
 settings = get_settings()
 configure_logging()
 
-def _before_send(event: Event, hint: Hint | None = None) -> Event | None:
+def _before_send(event: Event, hint: Hint) -> Event | None:
     request_data = event.get("request", {})
     if "data" in request_data:
         request_data["data"] = "[REDACTED]"
