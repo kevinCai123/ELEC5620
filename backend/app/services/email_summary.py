@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-import json
 import asyncio
 import logging
+import json
 from pathlib import Path
+from typing import TYPE_CHECKING, cast
 
 from app.core.config import get_settings
 from app.schemas.emails import EmailSummary
@@ -11,6 +12,9 @@ from app.services.cache import cache
 from app.services.llm import LLMResult, LLMService
 from app.utils.metrics import emit_metric
 from app.services.gmail import GmailClient, GmailNotConfiguredError
+
+if TYPE_CHECKING:
+    from app.services.llm import EmailAnalysis
 
 
 class EmailService:
@@ -21,7 +25,7 @@ class EmailService:
         self._gmail_client = self._init_gmail_client()
         self._logger = logging.getLogger(__name__)
 
-    def _load_sample_emails(self) -> list[dict[str, str]]:
+    def _load_sample_emails(self) -> list[dict[str, str | None]]:
         data_path = Path(__file__).resolve().parent.parent / "data" / "sample_emails.json"
         with data_path.open("r", encoding="utf-8") as fh:
             return json.load(fh)
@@ -35,7 +39,7 @@ class EmailService:
             logging.getLogger(__name__).warning("Failed to initialise Gmail client: %s", exc)
             return None
 
-    async def _fetch_source_emails(self, n: int) -> tuple[list[dict[str, str]], bool]:
+    async def _fetch_source_emails(self, n: int) -> tuple[list[dict[str, str | None]], bool]:
         if self._gmail_client is None:
             return self._emails[:n], True
         try:
@@ -61,18 +65,22 @@ class EmailService:
         summaries: list[EmailSummary] = []
         source_emails, fallback_used = await self._fetch_source_emails(n)
         for email in source_emails:
+            body = email.get("body") or ""
+            subject = email.get("subject") or "(no subject)"
+            sender = email.get("sender") or "(unknown sender)"
+            email_id = email.get("id") or "unknown"
             llm_result: LLMResult = await self._llm.summarize_email(
-                subject=email["subject"], sender=email["sender"], body=email["body"]
+                subject=subject, sender=sender, body=body
             )
             fallback_used = fallback_used or llm_result.fallback_used
             
             # Extract structured analysis
-            analysis = llm_result.data
+            analysis = cast("EmailAnalysis", llm_result.data)
             summaries.append(
                 EmailSummary(
-                    id=email["id"],
-                    subject=email["subject"],
-                    sender=email["sender"],
+                    id=email_id,
+                    subject=subject,
+                    sender=sender,
                     summary=analysis.summary,
                     key_points=analysis.key_points,
                     category=analysis.category,

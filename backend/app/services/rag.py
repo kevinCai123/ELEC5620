@@ -30,7 +30,7 @@ def _embeddings():
     if api_key and OpenAIEmbeddings is not None:
         model = settings.openai_embed_model
         os.environ.setdefault("OPENAI_API_KEY", api_key)
-        embeddings = OpenAIEmbeddings(model=model, api_key=api_key)
+        embeddings = OpenAIEmbeddings(model=model)
         logger = __import__("logging").getLogger(__name__)
         logger.info("Using OpenAI embeddings", extra={"model": model})
         return embeddings
@@ -64,10 +64,15 @@ def ingest_folder(folder: str, index_path: Path | None = None) -> None:
     vectorstore = FAISS.from_documents(split_docs, embeddings)
 
     vectorstore.save_local(str(target))
+    sources_set = {
+        source
+        for source in (doc.metadata.get("source") for doc in split_docs)
+        if isinstance(source, str)
+    }
     meta = {
         "documents": len(docs),
         "chunks": len(split_docs),
-        "sources": sorted({doc.metadata.get("source") for doc in split_docs}),
+        "sources": sorted(sources_set),
     }
     (target / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 

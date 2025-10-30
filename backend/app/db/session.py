@@ -21,7 +21,8 @@ async def get_session() -> AsyncIterator[AsyncSession]:
 
 async def init_db() -> None:
     # Alembic handles migrations; placeholder if we need startup checks later.
-    await engine.run_sync(lambda sync_engine: None)
+    async with engine.begin() as connection:
+        await connection.run_sync(lambda sync_conn: None)
 
 
 __all__ = ["engine", "SessionLocal", "get_session", "init_db"]

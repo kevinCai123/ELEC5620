@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import os
 from dataclasses import dataclass
-from typing import Any, List
+from typing import Any, Callable, List, Optional, cast
 from zoneinfo import ZoneInfo
 
 import dateparser
@@ -58,14 +58,14 @@ class LLMService:
 
     def __init__(self) -> None:
         self.settings = get_settings()
-        self._llm = self._init_llm()
-        self._retriever = None
+        self._llm: Optional[RunnableSerializable[Any, Any]] = self._init_llm()
+        self._retriever: Optional[Callable[[str], List[Document]]] = None
         try:
             self._retriever = get_retriever()
         except Exception as exc:  # pragma: no cover - RAG optional
             logger.info("RAG retriever unavailable: %s", exc)
 
-    def _init_llm(self) -> Any | None:
+    def _init_llm(self) -> Optional[RunnableSerializable[Any, Any]]:
         if ChatOpenAI is None:
             logger.warning("langchain-openai package missing; using fallback implementations")
             return None
@@ -75,9 +75,9 @@ class LLMService:
             return None
         model = self.settings.openai_model
         os.environ.setdefault("OPENAI_API_KEY", api_key)
-        llm = ChatOpenAI(model=model, api_key=api_key, temperature=0.2, timeout=20, max_retries=1)
+        llm = ChatOpenAI(model=model, temperature=0.2, timeout=20, max_retries=1)
         logger.info("ChatOpenAI initialised", extra={"model": model})
-        return llm
+        return cast(RunnableSerializable[Any, Any], llm)
 
     @property
     def has_llm(self) -> bool:
@@ -155,9 +155,12 @@ Input state: {truncated_notice}"""
                 ("human", human_prompt),
             ]
         ).partial(format_instructions=format_instructions)
-        chain: RunnableSerializable = prompt | self._llm | parser
+        llm = self._llm
+        if llm is None:
+            raise RuntimeError("LLM not initialised")
+        chain: RunnableSerializable[Any, Any] = prompt | llm | parser
         truncated_notice = "Input truncated" if truncated else "Complete input"
-        return await chain.ainvoke(
+        result = await chain.ainvoke(
             {
                 "text": text,
                 "context": context or "(no context)",
@@ -165,6 +168,7 @@ Input state: {truncated_notice}"""
                 "user_request": user_request,
             }
         )
+        return cast(SummaryNote, result)
 
     def _enforce_summary_limits(self, note: SummaryNote, truncated: bool) -> SummaryNote:
         words = note.tldr.split()
@@ -208,10 +212,16 @@ Input state: {truncated_notice}"""
                 ),
             ]
         )
-        chain = prompt | self._llm | parser
+        llm = self._llm
+        if llm is None:
+            raise RuntimeError("LLM not initialised")
+        chain: RunnableSerializable[Any, Any] = prompt | llm | parser
         truncated_notice = "Input truncated" if truncated else "Complete input"
-        batch = await chain.ainvoke({"text": text, "context": context or "(no context)", "truncated_notice": truncated_notice})
-        return list(batch.items)
+        batch = await chain.ainvoke(
+            {"text": text, "context": context or "(no context)", "truncated_notice": truncated_notice}
+        )
+        quiz_batch = cast(QuizBatch, batch)
+        return list(quiz_batch.items)
 
     def _deduplicate_quiz_items(self, items: List[QuizItem]) -> List[QuizItem]:
         unique: List[QuizItem] = []
@@ -280,9 +290,12 @@ Input state: {truncated_notice}"""
             ).partial(format_instructions=format_instructions)
             
             try:
-                chain = prompt | self._llm | parser
+                llm = self._llm
+                if llm is None:
+                    raise RuntimeError("LLM not initialised")
+                chain: RunnableSerializable[Any, Any] = prompt | llm | parser
                 analysis = await chain.ainvoke({"subject": subject, "sender": sender, "body": trimmed_body})
-                return LLMResult(analysis, fallback_used=False)
+                return LLMResult(cast(EmailAnalysis, analysis), fallback_used=False)
             except Exception as exc:  # noqa: BLE001
                 logger.warning("LLM email analysis failed: %s", exc)
         
@@ -308,9 +321,13 @@ Input state: {truncated_notice}"""
                 ("human", "SOURCE:\n{text}"),
             ]
         )
-        chain = prompt | self._llm | parser
+        llm = self._llm
+        if llm is None:
+            raise RuntimeError("LLM not initialised")
+        chain: RunnableSerializable[Any, Any] = prompt | llm | parser
         batch = await chain.ainvoke({"text": text})
-        return list(batch.items)
+        todo_batch = cast(TodoBatch, batch)
+        return list(todo_batch.items)
 
     def _normalise_todos(self, drafts: List[TodoDraft]) -> List[TodoDraft]:
         normalised: List[TodoDraft] = []
@@ -493,4 +510,4 @@ Input state: {truncated_notice}"""
         return drafts
 
 
-__all__ = ["LLMService", "LLMResult"]
+__all__ = ["LLMService", "LLMResult", "EmailAnalysis"]
