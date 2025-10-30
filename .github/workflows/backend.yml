@@ -17,22 +17,53 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install dependencies
+
+      - name: Install Poetry
         run: |
           python -m pip install --upgrade pip
-          pip install poetry
-          poetry install --no-interaction
+          python -m pip install "poetry==2.2.1"
+
+      - name: Determine Poetry cache directory
+        id: poetry-cache-dir
+        run: echo "dir=$(poetry config cache-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore Poetry cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.poetry-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles('backend/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Install dependencies
+        run: |
+          poetry env use "$(command -v python)"
+          poetry lock --no-interaction
+          poetry sync --no-interaction
+
+      - name: Check project metadata
+        run: poetry check
+
       - name: Lint with ruff
         run: poetry run ruff check .
+
       - name: Type-check with mypy
-        run: poetry run mypy .
+        run: poetry run mypy app tests
+
       - name: Run tests
         env:
           PYTHONPATH: backend
+          DATABASE_URL: sqlite+aiosqlite:///:memory:
+          OPENAI_API_KEY: test-key
+          OPENWEATHER_API_KEY: test-key
         run: poetry run pytest
+
       - name: Build wheel
         run: poetry build

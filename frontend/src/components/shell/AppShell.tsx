@@ -19,9 +19,7 @@ import {
 
 import AppShellLayout from '../layout/AppShell';
 import { PageSection } from '../layout/PageSection';
-import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Card } from '../ui/card';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../ui/command';
 import { Dialog, DialogContent } from '../ui/dialog';
 import { Drawer, DrawerContent, DrawerTrigger } from '../ui/drawer';

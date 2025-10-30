@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import hashlib
-from typing import Iterable, Tuple
+from typing import Iterable
 
 from rapidfuzz import fuzz
 from sqlalchemy import select

@@ -8,7 +8,7 @@ from collections.abc import Awaitable, Callable
 from functools import wraps
 from hashlib import sha256
 import pickle
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 try:  # Optional dependency
     import aioredis  # type: ignore
@@ -55,14 +55,14 @@ def cache(ttl: int = 86400) -> Callable[[Callable[..., Awaitable[ReturnType]]], 
             async with _lock:
                 entry = _memory_cache.get(key)
                 if entry and entry[0] > now:
-                    return entry[1]
+                    return cast(ReturnType, entry[1])
 
             client = await _get_redis_client()
             if client:
                 cached_value = await client.get(key)
                 if cached_value is not None:
                     try:
-                        return pickle.loads(cached_value)
+                        return cast(ReturnType, pickle.loads(cached_value))
                     except Exception:  # pragma: no cover - corrupted cache
                         await client.delete(key)
 

@@ -8,7 +8,6 @@ import httpx
 
 from app.core.config import get_settings
 from app.schemas.travel import TravelAdviceResponse
-from app.utils.time import utc_now
 from app.utils.metrics import emit_metric, time_metric
 
 _SETTINGS = get_settings()

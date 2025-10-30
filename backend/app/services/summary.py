@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import re
 from html import unescape
-from typing import Tuple
 
 import httpx
 from pydantic import HttpUrl

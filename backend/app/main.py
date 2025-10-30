@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import asyncio
+from typing import Any
 from zoneinfo import ZoneInfo
 
 import sentry_sdk
@@ -13,8 +13,6 @@ from app.api.deps import get_digest_service
 from app.core.config import get_settings
 from app.core.logging import RequestLoggingMiddleware, configure_logging
 from app.db.session import get_session
-from app.services.digest import DigestService
-
 try:
     from apscheduler.schedulers.asyncio import AsyncIOScheduler
 except ImportError as exc:  # pragma: no cover
@@ -23,7 +21,7 @@ except ImportError as exc:  # pragma: no cover
 settings = get_settings()
 configure_logging()
 
-def _before_send(event: dict, hint: dict | None) -> dict | None:
+def _before_send(event: dict[str, Any], hint: dict[str, Any]) -> dict[str, Any] | None:
     request_data = event.get("request", {})
     if "data" in request_data:
         request_data["data"] = "[REDACTED]"
@@ -32,7 +30,11 @@ def _before_send(event: dict, hint: dict | None) -> dict | None:
 
 
 if settings.sentry_dsn:
-    sentry_sdk.init(dsn=settings.sentry_dsn, traces_sample_rate=0.1, before_send=_before_send)
+    sentry_sdk.init(
+        dsn=settings.sentry_dsn,
+        traces_sample_rate=0.1,
+        before_send=_before_send,  # type: ignore[arg-type]
+    )
 
 app = FastAPI(
     title="Study Companion API",

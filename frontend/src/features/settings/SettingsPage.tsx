@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../..
 import { Input } from '../../components/ui/input';
 import { SegmentedControl, SegmentedControlItem } from '../../components/ui/segmented-control';
 import { Switch } from '../../components/ui/switch';
-import { useTheme } from '../../providers/ThemeProvider';
+import { useTheme } from '../../providers/theme-context';
 import { apiClient } from '../../api/client';
 
 const DEFAULT_USER_ID = 'demo-user';
