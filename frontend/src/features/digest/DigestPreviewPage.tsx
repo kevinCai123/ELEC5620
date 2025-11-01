@@ -47,7 +47,7 @@ export function DigestPreviewPage() {
 
   const emailMutation = useMutation({
     mutationFn: async (recipientEmail: string) => {
-      const response = (await apiClient.POST('/digest/send' as any, {
+      const response = (await apiClient.POST('/digest/send' as never, {
         body: {
           recipient_email: recipientEmail,
         },

@@ -82,7 +82,7 @@ export function CodeSandboxPage() {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const response = (await apiClient.POST('/code/execute' as any, {
+      const response = (await apiClient.POST('/code/execute' as never, {
         body: { code, language, timeout },
       })) as ApiResult<CodeExecutionResponse>;
       if (response.error) {

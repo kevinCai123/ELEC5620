@@ -32,7 +32,7 @@ export function CodeGenerationPage() {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const response = (await apiClient.POST('/code/generate' as any, {
+      const response = (await apiClient.POST('/code/generate' as never, {
         body: { prompt, language },
       })) as ApiResult<CodeGenerationResponse>;
       if (response.error) {
