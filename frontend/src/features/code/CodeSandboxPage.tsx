@@ -82,7 +82,8 @@ export function CodeSandboxPage() {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const response = (await apiClient.POST('/code/execute' as never, {
+      // @ts-expect-error - API endpoint exists but not in generated types
+      const response = (await apiClient.POST('/code/execute', {
         body: { code, language, timeout },
       })) as ApiResult<CodeExecutionResponse>;
       if (response.error) {

@@ -47,7 +47,8 @@ export function DigestPreviewPage() {
 
   const emailMutation = useMutation({
     mutationFn: async (recipientEmail: string) => {
-      const response = (await apiClient.POST('/digest/send' as never, {
+      // @ts-expect-error - API endpoint exists but not in generated types
+      const response = (await apiClient.POST('/digest/send', {
         body: {
           recipient_email: recipientEmail,
         },

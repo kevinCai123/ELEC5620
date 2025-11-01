@@ -32,7 +32,8 @@ export function CodeGenerationPage() {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const response = (await apiClient.POST('/code/generate' as never, {
+      // @ts-expect-error - API endpoint exists but not in generated types
+      const response = (await apiClient.POST('/code/generate', {
         body: { prompt, language },
       })) as ApiResult<CodeGenerationResponse>;
       if (response.error) {
