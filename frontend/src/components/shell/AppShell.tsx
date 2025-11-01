@@ -12,7 +12,6 @@ import {
   Home,
   Mail,
   Menu,
-  MessageSquareQuote,
   Settings,
   Sparkles,
   Terminal,

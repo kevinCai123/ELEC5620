@@ -1,7 +1,7 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, Inbox, RefreshCw, Sparkles, CheckCircle2, Tag, Mail, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
@@ -35,7 +35,6 @@ const TOTAL_EMAILS = 18;
 export function EmailsPage() {
   const [selectedEmail, setSelectedEmail] = useState<EmailSummary | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const queryClient = useQueryClient();
 
   const { data, isPending, error, refetch, isFetching } = useQuery({
     queryKey: EMAILS_QUERY_KEY,
@@ -95,7 +94,7 @@ export function EmailsPage() {
           </p>
           {data && !isEmpty && (
             <p className="text-sm text-foreground/50">
-              Showing {paginatedEmails.length} of {data.emails.length} emails · Page {currentPage} of {totalPages}
+              Showing {paginatedEmails.length} of {data.emails.length} emails ï¿½ Page {currentPage} of {totalPages}
             </p>
           )}
           {data?.fallback_used && (

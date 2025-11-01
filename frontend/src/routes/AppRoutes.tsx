@@ -14,7 +14,7 @@ import { QuizPage } from '../features/quiz/QuizPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { SummarizePage } from '../features/summarize/SummarizePage';
 import { TravelPage } from '../features/travel/TravelPage';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 function RootRedirect() {
   const { isAuthenticated, isLoading } = useAuth();
