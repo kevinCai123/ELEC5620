@@ -47,7 +47,7 @@ export function DigestPreviewPage() {
 
   const emailMutation = useMutation({
     mutationFn: async (recipientEmail: string) => {
-      const response = (await apiClient.POST('/digest/send', {
+      const response = (await apiClient.POST('/digest/send' as any, {
         body: {
           recipient_email: recipientEmail,
         },
@@ -114,7 +114,7 @@ export function DigestPreviewPage() {
               Email Digest (18 Recent Emails)
             </CardTitle>
             <CardDescription>
-              AI-powered comprehensive summary · Generated at {formatDateTime(query.data.generated_at)}
+              AI-powered comprehensive summary ï¿½ Generated at {formatDateTime(query.data.generated_at)}
             </CardDescription>
           </CardHeader>
         </Card>

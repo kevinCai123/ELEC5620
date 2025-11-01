@@ -7,7 +7,7 @@ import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Textarea } from '../../components/ui/textarea';
-import { Select } from '../../components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Input } from '../../components/ui/input';
 import { apiClient } from '../../api/client';
 
@@ -82,7 +82,7 @@ export function CodeSandboxPage() {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const response = (await apiClient.POST('/code/execute', {
+      const response = (await apiClient.POST('/code/execute' as any, {
         body: { code, language, timeout },
       })) as ApiResult<CodeExecutionResponse>;
       if (response.error) {
@@ -119,13 +119,17 @@ export function CodeSandboxPage() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <label className="text-xs uppercase tracking-[0.28em] text-foreground/50">Language</label>
-              <Select value={language} onValueChange={handleLanguageChange} className="w-full">
-                <option value="">Select language...</option>
-                {LANGUAGES.map((lang) => (
-                  <option key={lang.value} value={lang.value}>
-                    {lang.label}
-                  </option>
-                ))}
+              <Select value={language} onValueChange={handleLanguageChange}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select language..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {LANGUAGES.map((lang) => (
+                    <SelectItem key={lang.value} value={lang.value}>
+                      {lang.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </div>
 

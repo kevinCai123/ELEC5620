@@ -7,7 +7,7 @@ import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Textarea } from '../../components/ui/textarea';
-import { Select } from '../../components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { apiClient } from '../../api/client';
 
 type CodeGenerationResponse = {
@@ -32,7 +32,7 @@ export function CodeGenerationPage() {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const response = (await apiClient.POST('/code/generate', {
+      const response = (await apiClient.POST('/code/generate' as any, {
         body: { prompt, language },
       })) as ApiResult<CodeGenerationResponse>;
       if (response.error) {
@@ -66,13 +66,17 @@ export function CodeGenerationPage() {
         <CardContent className="min-w-0 space-y-6">
           <div className="space-y-2">
             <label className="text-xs uppercase tracking-[0.28em] text-foreground/50">Programming Language</label>
-            <Select value={language} onValueChange={setLanguage} className="w-full max-w-md">
-              <option value="">Select language...</option>
-              {LANGUAGES.map((lang) => (
-                <option key={lang.value} value={lang.value}>
-                  {lang.label}
-                </option>
-              ))}
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger className="w-full max-w-md">
+                <SelectValue placeholder="Select language..." />
+              </SelectTrigger>
+              <SelectContent>
+                {LANGUAGES.map((lang) => (
+                  <SelectItem key={lang.value} value={lang.value}>
+                    {lang.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
             </Select>
           </div>
 

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import { useMutation } from '@tanstack/react-query';
 import { CalendarCheck2, CheckCircle2, Send } from 'lucide-react';
 import { z } from 'zod';
