@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useMutation } from '@tanstack/react-query';
 import ReactMarkdown from 'react-markdown';
@@ -64,8 +64,8 @@ export function SummarizePage() {
           const bullets = section.bullets.map((bullet) => `- ${bullet}`);
           return [`### ${section.heading}`, ...bullets].join('\n');
         });
-        const qna = note.qna_seeds.map((seed) => `- **${seed.q}** — ${seed.a_hint}`);
-        return ['**TL;DR**', '', note.tldr, '', ...sectionBlocks, '', '**Q&A Seeds**', ...qna].join('\n');
+        // Q&A Seeds removed from display
+        return ['**TL;DR**', '', note.tldr, '', ...sectionBlocks].join('\n');
       })()
     : '';
 
@@ -80,7 +80,7 @@ export function SummarizePage() {
 
   return (
     <section className="grid min-w-0 gap-6 lg:grid-cols-2">
-      <Card className="min-w-0 border-white/12 bg-white/8">
+      <Card className="min-w-0 border-foreground/12 bg-foreground/[0.08]">
         <CardHeader className="space-y-3">
           <Badge variant="glow">AI note maker</Badge>
           <CardTitle className="flex items-center gap-3 text-2xl">
@@ -104,7 +104,7 @@ export function SummarizePage() {
                 value={text}
                 onChange={(event) => setText(event.target.value)}
                 placeholder="Paste any study material or meeting notes..."
-                className="min-h-[260px] w-full max-w-full"
+                className="min-h-[260px] w-full max-w-[calc(100%-50px)]"
               />
             </TabsContent>
             <TabsContent value="url" className="min-w-0 space-y-3">
@@ -165,7 +165,7 @@ export function SummarizePage() {
         </CardContent>
       </Card>
 
-      <Card className="flex min-h-[420px] min-w-0 flex-col border-white/12 bg-white/8">
+      <Card className="flex min-h-[420px] min-w-0 flex-col border-foreground/12 bg-foreground/[0.08]">
         <CardHeader className="space-y-2">
           <CardTitle className="flex items-center gap-3 text-2xl">
             <Sparkles className="h-5 w-5 text-primary" />
@@ -176,7 +176,7 @@ export function SummarizePage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex min-h-0 flex-1 flex-col gap-4">
-          <div className="relative flex min-h-[320px] flex-1 flex-col overflow-hidden rounded-2xl border border-white/10 bg-background/40 p-6">
+          <div className="relative flex min-h-[320px] flex-1 flex-col overflow-hidden rounded-2xl border border-foreground/10 bg-background/40 p-6">
             {!hasResult && !isLoading && (
               <div className="flex h-full flex-col items-center justify-center gap-4 text-center text-foreground/60">
                 <Sparkles className="h-10 w-10 text-primary" />

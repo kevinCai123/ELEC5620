@@ -44,13 +44,13 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed left-1/2 top-1/2 z-50 w-full max-w-xl -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-white/10 bg-background/95 p-8 text-foreground shadow-glow-md backdrop-blur-2xl transition duration-200 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+        'fixed left-1/2 top-1/2 z-50 w-full max-w-xl -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-foreground/10 bg-background/95 p-8 text-foreground shadow-glow-md backdrop-blur-2xl transition duration-200 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
         className,
       )}
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-6 top-6 rounded-full border border-white/10 bg-white/5 p-2 text-foreground/70 transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+      <DialogPrimitive.Close className="absolute right-6 top-6 rounded-full border border-foreground/10 bg-foreground/[0.05] p-2 text-foreground/70 transition hover:bg-foreground/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
         <X className="h-4 w-4" aria-hidden="true" />
         <span className="sr-only">Close dialog</span>
       </DialogPrimitive.Close>
@@ -98,3 +98,5 @@ export {
   DialogTitle,
   DialogTrigger,
 };
+
+export { VisuallyHidden } from './visually-hidden';

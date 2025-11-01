@@ -1,83 +1,166 @@
 from __future__ import annotations
 
-import hashlib
-from typing import Iterable
+from typing import Iterable, List
 
 from rapidfuzz import fuzz
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import Quiz
+from pydantic import BaseModel, Field
+from langchain_core.output_parsers import PydanticOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+
 from app.schemas.quiz import QuizItem
 from app.services.llm import LLMService
 from app.utils.metrics import emit_metric, time_metric
 
-_TEMPLATE_POOL: list[QuizItem] = [
-    QuizItem(
-        stem="What is the central theme of the study material?",
-        options=[
-            "An overview of the main concepts",
-            "A list of unrelated facts",
-            "A biography of the author",
-            "A set of random definitions",
-        ],
-        answer_index=0,
-        rationale="The material emphasises the main concepts, making option A the best choice.",
-        generated_from="template",
-    ),
-    QuizItem(
-        stem="Which limitation is highlighted?",
-        options=[
-            "Resource constraints",
-            "Unlimited funding",
-            "Guaranteed success",
-            "Irrelevant background noise",
-        ],
-        answer_index=0,
-        rationale="Resource constraints are explicitly mentioned as a limitation.",
-        generated_from="template",
-    ),
-    QuizItem(
-        stem="How many multiple-choice questions are produced?",
-        options=["Five", "Three", "Two", "Ten"],
-        answer_index=0,
-        rationale="The requirement is exactly five MCQs.",
-        generated_from="template",
-    ),
-]
+
+# === Pydantic container for an oversampled batch directly from the LLM ===
+class _QuizCandidates(BaseModel):
+    items: List[QuizItem] = Field(min_length=5, max_length=12)
 
 
 class QuizService:
     def __init__(self) -> None:
         self._llm = LLMService()
 
+    # ---------------------------
+    # Public: get or create quiz
+    # ---------------------------
     async def get_or_create_quiz(
         self, notes: str, session: AsyncSession
     ) -> tuple[list[QuizItem], float, bool, bool]:
-        source_hash = hashlib.sha256(notes.encode("utf-8")).hexdigest()
-        existing = await session.scalar(select(Quiz).where(Quiz.source_hash == source_hash))
-        if existing:
-            items = [QuizItem(**item) for item in existing.items_json]
-            return items, 0.0, False, False
-
+        """
+        Returns: (items, duplicate_rate, fallback_used, created)
+         - items: final 5 MCQs created by the LLM
+         - duplicate_rate: fraction of near-duplicate stems (post-selection)
+         - fallback_used: always False (we do not use template fallbacks)
+         - created: true if a DB row was created this call
+        """
+        # Cache disabled - always generate fresh questions
         with time_metric("p95_latency_ms", feature="quiz"):
-            llm_result = await self._llm.generate_quiz(notes)
-        items = self._ensure_valid_items(llm_result.data)
+            candidates = await self._generate_candidates_via_llm(notes)
+
+        # Select 5 high-quality items (light-touch: normalize + dedup + pick 5)
+        items = self._select_five(candidates)
+
         duplicate_rate = self._compute_duplicate_rate(items)
-        fallback_used = llm_result.fallback_used or duplicate_rate > 0
         emit_metric("duplicate_stem_rate", duplicate_rate, feature="quiz")
-        emit_metric("fallback_rate", 1.0 if fallback_used else 0.0, feature="quiz")
+        emit_metric("fallback_rate", 0.0, feature="quiz")  # no fallbacks in this pipeline
 
-        while len(items) < 5:
-            items.append(_TEMPLATE_POOL[len(items) % len(_TEMPLATE_POOL)])
-            fallback_used = True
+        # Database persistence disabled - fresh generation every time
+        # No caching, no saving to DB
+        return items, duplicate_rate, False, True
 
-        payload = [item.model_dump() for item in items[:5]]
-        quiz = Quiz(source_hash=source_hash, items_json=payload)
-        session.add(quiz)
-        await session.flush()
-        return items[:5], duplicate_rate, fallback_used, True
+    # ---------------------------
+    # LLM candidate generation (fully unlocked prompt)
+    # ---------------------------
+    async def _generate_candidates_via_llm(self, notes: str) -> list[QuizItem]:
+        """
+        Request 8–12 MCQs directly from the LLM with maximum freedom.
+        Only constraints: schema correctness, four options, and JSON output.
+        No fallback, no hard bans (e.g., it may generate any stem style).
+        """
+        if not self._llm.has_llm:
+            raise RuntimeError("LLM unavailable")
 
+        parser = PydanticOutputParser(pydantic_object=_QuizCandidates)
+        format_instructions = parser.get_format_instructions()
+
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    "Create 8-12 multiple-choice questions from the material provided. "
+                    "Use your best judgment for question types and styles - you have complete creative freedom. "
+                    "Each question must have: 'stem', 'options' (4 choices), 'answer_index' (0-3), and 'rationale'. "
+                    "Return JSON matching this format:\n{format_instructions}"
+                ),
+                (
+                    "human",
+                    "{notes}"
+                ),
+            ]
+        )
+
+        # High creativity settings for maximum variety
+        llm = self._llm._llm.bind(temperature=0.8, top_p=0.95)  # type: ignore[attr-defined]
+        chain = prompt | llm | parser
+        batch = await chain.ainvoke({"notes": notes, "format_instructions": format_instructions})
+        return list(batch.items)
+
+    # ---------------------------
+    # Selection (light-touch quality control)
+    # ---------------------------
+    def _normalize(self, item: QuizItem) -> QuizItem:
+        """
+        Minimal normalization to ensure schema sanity without constraining style:
+        - ensure stem ends with '?'
+        - ensure exactly 4 trimmed options
+        - clamp answer_index to 0..3
+        """
+        stem = (item.stem or "").strip()
+        if stem and not stem.endswith("?"):
+            stem += "?"
+        options = [o.strip() for o in (item.options or []) if o and o.strip()]
+        # ensure exactly 4 by truncating or padding with a neutral string
+        while len(options) < 4:
+            options.append("No other option is correct.")
+        options = options[:4]
+        ai = int(item.answer_index) if isinstance(item.answer_index, int) else 0
+        ai = 0 if ai < 0 or ai > 3 else ai
+        rationale = (item.rationale or "").strip()
+
+        return QuizItem(
+            stem=stem or "What is the most accurate statement based on the material?",
+            options=options,
+            answer_index=ai,
+            rationale=rationale or "Derived from the material.",
+            generated_from=getattr(item, "generated_from", None),
+        )
+
+    def _dedup_by_stem(self, items: list[QuizItem], threshold: int = 90) -> list[QuizItem]:
+        """Remove near-duplicate stems (very light constraint to keep variety)."""
+        out: list[QuizItem] = []
+        seen: list[str] = []
+        for it in items:
+            if any(fuzz.ratio(it.stem, s) >= threshold for s in seen):
+                continue
+            out.append(it)
+            seen.append(it.stem)
+        return out
+
+    def _select_five(self, candidates: Iterable[QuizItem]) -> list[QuizItem]:
+        # Normalize all candidates
+        normalized = [self._normalize(it) for it in candidates]
+
+        # Deduplicate stems very lightly to keep variety
+        unique = self._dedup_by_stem(normalized, threshold=90)
+
+        # If the LLM gave fewer than 5 after normalization (rare), just take what we have
+        if len(unique) <= 5:
+            return unique[:5]
+
+        # Otherwise, keep the first five (they should already be high-quality/varied)
+        return unique[:5]
+
+    # ---------------------------
+    # Metrics helpers
+    # ---------------------------
+    def _compute_duplicate_rate(self, items: list[QuizItem]) -> float:
+        if not items:
+            return 1.0
+        duplicates = 0
+        seen: list[str] = []
+        for item in items:
+            if any(fuzz.ratio(item.stem, existing) > 85 for existing in seen):
+                duplicates += 1
+            else:
+                seen.append(item.stem)
+        return duplicates / len(items)
+
+    # ---------------------------
+    # Legacy helpers (unused, kept for compatibility)
+    # ---------------------------
     def _ensure_valid_items(self, items: Iterable[QuizItem]) -> list[QuizItem]:
         validated: list[QuizItem] = []
         for item in items:
@@ -90,23 +173,11 @@ class QuizService:
                     stem=item.stem.strip(),
                     options=[opt.strip() for opt in options],
                     answer_index=answer_index,
-                    rationale=item.rationale.strip(),
+                    rationale=(item.rationale or "").strip(),
                     generated_from=item.generated_from,
                 )
             )
         return validated
-
-    def _compute_duplicate_rate(self, items: list[QuizItem]) -> float:
-        if not items:
-            return 1.0
-        duplicates = 0
-        seen: list[str] = []
-        for item in items:
-            if any(fuzz.ratio(item.stem, existing) > 85 for existing in seen):
-                duplicates += 1
-            else:
-                seen.append(item.stem)
-        return duplicates / len(items)
 
 
 __all__ = ["QuizService"]

@@ -4,6 +4,7 @@ import base64
 import logging
 import re
 from dataclasses import dataclass
+from email.message import EmailMessage
 from typing import List, Optional
 
 try:  # pragma: no cover - optional dependency import
@@ -24,6 +25,7 @@ from app.core.config import Settings
 logger = logging.getLogger(__name__)
 
 GMAIL_READONLY_SCOPE = "https://www.googleapis.com/auth/gmail.readonly"
+GMAIL_SEND_SCOPE = "https://www.googleapis.com/auth/gmail.send"
 TOKEN_URI = "https://oauth2.googleapis.com/token"
 
 
@@ -70,14 +72,15 @@ class GmailClient:
             ]
         )
 
-    def _credentials(self) -> Credentials:
+    def _credentials(self, scopes: Optional[List[str]] = None) -> Credentials:
+        scopes = scopes or [GMAIL_READONLY_SCOPE]
         creds = Credentials(
             token=None,
             refresh_token=self._settings.google_refresh_token,
             client_id=self._settings.google_client_id,
             client_secret=self._settings.google_client_secret,
             token_uri=TOKEN_URI,
-            scopes=[GMAIL_READONLY_SCOPE],
+            scopes=scopes,
         )
         creds.refresh(Request())
         return creds
@@ -102,6 +105,55 @@ class GmailClient:
             if message:
                 messages.append(message)
         return messages
+
+    def send_email(
+        self,
+        *,
+        subject: str,
+        body_text: str,
+        to_email: str,
+        attachments: Optional[List[tuple[str, str, bytes, Optional[dict[str, str]]]]] = None,
+        calendar_alternative: Optional[tuple[str, Optional[dict[str, str]]]] = None,
+    ) -> None:
+        if not to_email:
+            raise ValueError("Recipient email address is required")
+        if build is None:
+            raise GmailNotConfiguredError(
+                "Gmail dependencies are missing. Install google-api-python-client, google-auth, and google-auth-oauthlib."
+            )
+        creds = self._credentials([GMAIL_SEND_SCOPE])
+        service = build("gmail", "v1", credentials=creds, cache_discovery=False)
+
+        message = EmailMessage()
+        from_email = self._settings.google_api_user_email or to_email
+        message["To"] = to_email
+        message["From"] = from_email
+        message["Subject"] = subject
+        message.set_content(body_text)
+
+        if calendar_alternative:
+            calendar_text, params = calendar_alternative
+            message.add_alternative(
+                calendar_text,
+                subtype="calendar",
+                params=params,
+            )
+
+        for filename, mime_type, data, extra_params in attachments or []:
+            maintype, subtype = mime_type.split("/", 1)
+            message.add_attachment(
+                data,
+                maintype=maintype,
+                subtype=subtype,
+                filename=filename,
+                params=extra_params,
+            )
+
+        raw_message = base64.urlsafe_b64encode(message.as_bytes()).decode("utf-8")
+        try:
+            service.users().messages().send(userId=self._user_id, body={"raw": raw_message}).execute()
+        except HttpError as exc:  # pragma: no cover - external dependency
+            raise RuntimeError(f"Gmail API send call failed: {exc}") from exc
 
     def _get_message(self, service, message_id: str) -> Optional[GmailMessage]:
         try:

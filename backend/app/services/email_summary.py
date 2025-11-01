@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, cast
 
 from app.core.config import get_settings
 from app.schemas.emails import EmailSummary
-from app.services.cache import cache
 from app.services.llm import LLMResult, LLMService
 from app.utils.metrics import emit_metric
 from app.services.gmail import GmailClient, GmailNotConfiguredError
@@ -75,7 +74,7 @@ class EmailService:
             self._logger.warning("Gmail fetch failed, falling back to sample emails: %s", exc)
         return self._emails[:n], True
 
-    @cache(ttl=300)
+    # Cache disabled - always generate fresh email summaries
     async def _cached_top_emails(self, n: int) -> tuple[list[EmailSummary], bool]:
         summaries: list[EmailSummary] = []
         source_emails, fallback_used = await self._fetch_source_emails(n)

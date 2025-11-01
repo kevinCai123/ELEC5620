@@ -11,7 +11,6 @@ from app.services.email_summary import EmailService
 from app.services.places import PlacesService
 from app.services.quiz import QuizService
 from app.services.summary import SummaryService
-from app.services.todo import TodoService
 from app.services.travel import TravelService
 
 
@@ -33,11 +32,6 @@ def get_summary_service() -> SummaryService:
 @lru_cache
 def get_quiz_service() -> QuizService:
     return QuizService()
-
-
-@lru_cache
-def get_todo_service() -> TodoService:
-    return TodoService()
 
 
 @lru_cache

@@ -8,7 +8,7 @@ export function Skeleton({ className, ...props }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-xl bg-white/8',
+        'relative overflow-hidden rounded-xl bg-foreground/[0.08]',
         "before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_1.8s_infinite] before:bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.25),transparent)]",
         className,
       )}

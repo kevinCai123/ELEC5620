@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Toaster } from '../components/ui/toast';
 import { TooltipProvider } from '../components/ui/tooltip';
 import { ThemeProvider } from './ThemeProvider';
+import { AuthProvider } from '../contexts/AuthContext';
 
 const createQueryClient = () =>
   new QueryClient({
@@ -22,13 +23,15 @@ export function AppProviders({ children }: PropsWithChildren) {
 
   return (
     <ThemeProvider>
-      <TooltipProvider delayDuration={120}>
-        <QueryClientProvider client={queryClient}>
-          {children}
-          <Toaster />
-          <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider delayDuration={120}>
+          <QueryClientProvider client={queryClient}>
+            {children}
+            <Toaster />
+            <ReactQueryDevtools initialIsOpen={false} />
+          </QueryClientProvider>
+        </TooltipProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

@@ -23,20 +23,20 @@ const config: Config = {
         mono: ['"JetBrains Mono"', 'monospace'],
       },
       colors: {
-        background: '#0b0f17',
-        foreground: '#e6edf6',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
         primary: {
           DEFAULT: '#6E7AFF',
-          foreground: '#0b0f17',
+          foreground: 'hsl(var(--primary-foreground))',
         },
         accent: {
           DEFAULT: '#22d3ee',
-          foreground: '#0b0f17',
+          foreground: 'hsl(var(--accent-foreground))',
         },
-        glass: 'rgba(255, 255, 255, 0.04)',
+        glass: 'var(--glass)',
         muted: {
-          DEFAULT: 'rgba(148, 163, 184, 0.32)',
-          foreground: '#94a3b8',
+          DEFAULT: 'var(--muted)',
+          foreground: 'hsl(var(--muted-foreground))',
         },
       },
       borderRadius: {

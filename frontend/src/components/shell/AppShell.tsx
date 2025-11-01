@@ -6,6 +6,7 @@ import {
   BookOpenCheck,
   Brain,
   CalendarClock,
+  Code2,
   Compass,
   FileText,
   Home,
@@ -14,6 +15,7 @@ import {
   MessageSquareQuote,
   Settings,
   Sparkles,
+  Terminal,
   Waypoints,
 } from 'lucide-react';
 
@@ -21,7 +23,7 @@ import AppShellLayout from '../layout/AppShell';
 import { PageSection } from '../layout/PageSection';
 import { Button } from '../ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../ui/command';
-import { Dialog, DialogContent } from '../ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogTitle, VisuallyHidden } from '../ui/dialog';
 import { Drawer, DrawerContent, DrawerTrigger } from '../ui/drawer';
 import { Kbd } from '../ui/kbd';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
@@ -30,11 +32,12 @@ import { ThemeToggle } from './ThemeToggle';
 const NAV_ITEMS = [
   { label: 'Dashboard', path: '/', icon: Home },
   { label: 'Emails', path: '/emails', icon: Mail },
-  { label: 'Study Plan', path: '/study/plan', icon: CalendarClock },
+  { label: 'Plan', path: '/plan', icon: CalendarClock },
   { label: 'Summarize', path: '/summarize', icon: FileText },
   { label: 'Quiz', path: '/quiz', icon: Brain },
+  { label: 'Code Generator', path: '/code/generate', icon: Code2 },
+  { label: 'Code Sandbox', path: '/code/sandbox', icon: Terminal },
   { label: 'Travel', path: '/travel', icon: Waypoints },
-  { label: 'To-Do', path: '/todo', icon: MessageSquareQuote },
   { label: 'Places', path: '/places', icon: Compass },
   { label: 'Digest', path: '/digest/preview', icon: BookOpenCheck },
   { label: 'Settings', path: '/settings', icon: Settings },
@@ -46,14 +49,16 @@ const PATH_LABELS: Record<string, string> = {
   '/': 'Dashboard',
   '/emails': 'Emails',
   '/study': 'Study',
-  '/study/plan': 'Study Plan',
+  '/plan': 'Plan',
+  '/study/plan': 'Plan',
   '/summarize': 'Summarize',
   '/quiz': 'Quiz',
+  '/code': 'Code',
+  '/code/generate': 'Code Generator',
+  '/code/sandbox': 'Code Sandbox',
   '/travel': 'Travel',
-  '/todo': 'To-Do',
   '/places': 'Places',
-  '/digest': 'Digest',
-  '/digest/preview': 'Digest Preview',
+  '/digest/preview': 'Digest',
   '/settings': 'Settings',
 };
 
@@ -117,11 +122,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         to={item.path}
         className={`group relative flex min-w-0 items-center gap-2.5 overflow-hidden rounded-xl px-3 py-2 text-sm font-medium transition duration-200 ease-aurora ${
           isActive
-            ? 'bg-white/10 text-foreground shadow-glow-md drop-shadow-glow'
-            : 'text-foreground/60 hover:bg-white/5 hover:text-foreground'
+            ? 'bg-foreground/10 text-foreground shadow-glow-md drop-shadow-glow'
+            : 'text-foreground/60 hover:bg-foreground/[0.05] hover:text-foreground'
         }`}
       >
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-foreground">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-foreground/10 bg-foreground/[0.05] text-foreground">
           <Icon className="h-3.5 w-3.5" />
         </span>
         <span className="truncate text-[13px]">{item.label}</span>
@@ -141,7 +146,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </motion.span>
         <div className="min-w-0">
           <p className="text-sm font-semibold leading-tight">Study Companion</p>
-          <p className="text-[10px] uppercase tracking-[0.24em] text-foreground/50">ELEC5620</p>
         </div>
       </Link>
       <nav className="flex flex-1 flex-col gap-0.5">{NAV_ITEMS.map(renderNavLink)}</nav>
@@ -157,7 +161,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <Menu className="h-5 w-5" />
             </Button>
           </DrawerTrigger>
-          <DrawerContent className="h-full w-[min(90vw,320px)] overflow-y-auto overscroll-contain border-r border-white/10 bg-background/95 px-4 py-8">
+          <DrawerContent className="h-full w-[min(90vw,320px)] overflow-y-auto overscroll-contain border-r border-foreground/10 bg-background/95 px-4 py-8">
             <nav className="flex flex-col gap-0.5">{NAV_ITEMS.map(renderNavLink)}</nav>
           </DrawerContent>
         </Drawer>
@@ -200,7 +204,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <Kbd>⌘K</Kbd>
             </span>
           </Button>
-          <DialogContent className="max-h-[80dvh] max-w-2xl overflow-hidden border-white/10 bg-background/95 p-0">
+          <DialogContent className="max-h-[80dvh] max-w-2xl overflow-hidden border-foreground/10 bg-background/95 p-0">
+            <VisuallyHidden>
+              <DialogTitle>Search workspace</DialogTitle>
+              <DialogDescription>
+                Search and navigate to any page in the workspace. Use arrow keys to navigate and Enter to select.
+              </DialogDescription>
+            </VisuallyHidden>
             <Command label="Global command menu">
               <CommandInput placeholder="Where to next?" />
               <CommandList className="max-h-[60dvh] overflow-y-auto">
@@ -251,7 +261,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Button
           variant="ghost"
           glow={false}
-          className="hidden h-10 items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 text-sm font-medium text-foreground/80 xl:flex"
+          className="hidden h-10 items-center gap-3 rounded-2xl border border-foreground/10 bg-foreground/[0.05] px-4 text-sm font-medium text-foreground/80 xl:flex"
         >
           <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-aurora text-background shadow-glow-md">
             SC
@@ -266,7 +276,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <AppShellLayout sidebar={sidebarContent} header={headerContent}>
       <div className="relative flex min-h-full w-full flex-col overflow-hidden">
         <div className="pointer-events-none absolute inset-x-0 top-0 z-1 mx-auto h-[320px] max-w-5xl bg-aurora opacity-30 blur-3xl" />
-        <PageSection className="flex min-h-0 flex-1 flex-col pb-16 pt-8">
+        <PageSection className="flex min-h-0 flex-1 flex-col pb-12 pt-6">
           <motion.div
             key={location.pathname}
             initial={{ opacity: 0, y: 12 }}

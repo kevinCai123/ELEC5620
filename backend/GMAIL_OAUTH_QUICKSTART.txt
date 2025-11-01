@@ -10,7 +10,9 @@ NEXT STEPS:
    Go to: https://console.cloud.google.com/
    - Create project
    - Enable Gmail API
+   - Enable Google Calendar API
    - Create OAuth Client ID (Desktop app)
+   - Add Gmail/GCal scopes: gmail.readonly, gmail.send, calendar.events
    - Copy Client ID and Client Secret
 
 2️⃣  Run Setup Script

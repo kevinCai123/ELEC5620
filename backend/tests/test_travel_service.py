@@ -12,7 +12,7 @@ from app.services.travel import TravelService
 async def test_travel_advice_includes_recommendation() -> None:
     service = TravelService()
     when = datetime.now(tz=ZoneInfo("Australia/Sydney"))
-    advice = await service.advise("UNSW Sydney", when)
+    advice = await service.advise("University of Sydney", when)
     assert "Leave about" in advice.recommendation
     assert advice.route_url.startswith("https://www.google.com/maps/dir/")
     assert advice.bring_items, "Should suggest items to bring"

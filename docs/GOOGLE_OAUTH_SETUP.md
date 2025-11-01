@@ -25,7 +25,12 @@ python setup_google_oauth.py
 2. Search for "**Gmail API**"
 3. Click on it, then click "**ENABLE**"
 
-### 3️⃣ Create OAuth Credentials
+### 3️⃣ Enable Google Calendar API
+
+1. While still in the Library, search for "**Google Calendar API**"
+2. Click on it, then click "**ENABLE**"
+
+### 4️⃣ Create OAuth Credentials
 
 1. Go to "APIs & Services" → "**Credentials**"
 2. Click "**+ CREATE CREDENTIALS**" at the top
@@ -41,8 +46,11 @@ python setup_google_oauth.py
    - Developer contact: Your email
 4. Click "SAVE AND CONTINUE"
 5. Click "ADD OR REMOVE SCOPES"
-   - Search for: `gmail.readonly`
-   - Check the box for `https://www.googleapis.com/auth/gmail.readonly`
+   - Search for: `gmail.readonly`, `gmail.send`, and `calendar.events`
+   - Check the boxes for:
+     - `https://www.googleapis.com/auth/gmail.readonly`
+     - `https://www.googleapis.com/auth/gmail.send`
+     - `https://www.googleapis.com/auth/calendar.events`
    - Click "UPDATE"
 6. Click "SAVE AND CONTINUE"
 7. Add Test Users:
@@ -60,7 +68,7 @@ python setup_google_oauth.py
 4. Name: "Study Companion Desktop"
 5. Click "**CREATE**"
 
-### 4️⃣ Get Your Credentials
+### 5️⃣ Get Your Credentials
 
 A popup will show your credentials:
 
@@ -73,7 +81,7 @@ Client Secret: GOCSPX-xxxxxxxxxxxxxxxxxxxxx
 - Copy these values (you'll need them for the script)
 - OR click "DOWNLOAD JSON" and use that file
 
-### 5️⃣ Run Setup Script
+### 6️⃣ Run Setup Script
 
 ```bash
 cd backend
@@ -86,7 +94,7 @@ The script will:
 3. Get the refresh token
 4. Automatically save everything to `.env`
 
-### 6️⃣ Complete Authorization
+### 7️⃣ Complete Authorization
 
 When the browser opens:
 1. Sign in with your Google account
@@ -95,7 +103,7 @@ When the browser opens:
 4. Click "**Continue**"
 5. The page will redirect to `http://localhost:8080/` (this is normal - the script catches it)
 
-### 7️⃣ Verify Setup
+### 8️⃣ Verify Setup
 
 Check your `.env` file should now have:
 
@@ -104,9 +112,11 @@ GOOGLE_CLIENT_ID=123456789-abcdefg.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=GOCSPX-xxxxxxxxxxxxxxxxxxxxx
 GOOGLE_REFRESH_TOKEN=1//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 GOOGLE_API_USER_EMAIL=your.email@gmail.com
+# Optional: override which calendar receives auto-created events
+GOOGLE_CALENDAR_ID=primary
 ```
 
-### 8️⃣ Restart Backend
+### 9️⃣ Restart Backend
 
 ```bash
 cd backend
@@ -115,7 +125,7 @@ python -m uvicorn app.main:app --reload
 
 You should NO LONGER see warnings about Gmail being unavailable!
 
-### 9️⃣ Test It
+### 🔟 Test It
 
 Open your frontend:
 1. Go to http://localhost:5173/emails
@@ -145,6 +155,14 @@ Open your frontend:
 3. Run the script again
 4. Make sure to click "Continue" through all prompts
 
+### "invalid_scope: Bad Request" when sending email
+
+**Solution:** Your existing refresh token only has read access.
+1. Go to https://myaccount.google.com/permissions
+2. Remove the "Study Companion" app
+3. Re-run `python setup_google_oauth.py`
+4. When the consent screen opens, authorize both Gmail scopes (`gmail.readonly` and `gmail.send`)
+
 ### "google_auth_oauthlib module not found"
 
 **Solution:**
@@ -158,6 +176,12 @@ pip install google-auth-oauthlib google-auth google-api-python-client
 1. Check `.env` file has all 3 values (CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN)
 2. Restart the backend completely (Ctrl+C, then start again)
 3. Check backend logs for Gmail-related errors
+
+### Calendar invites don't appear automatically
+
+- In Google Calendar, open **Settings → General → Automatically add invitations** and select **Yes** so Gmail invitations are placed on your calendar.
+- On iPhone, add your Google account under **Settings → Calendar → Accounts** and ensure the **Calendars** toggle is enabled so accepted invites sync to the device.
+- If you want the backend to add events directly, make sure the Google Calendar API is enabled and the OAuth token includes the `calendar.events` scope (rerun the setup script after adding the scope). The backend will then write plan items straight into your Google Calendar in addition to sending the email invite.
 
 ## What Gets Stored
 

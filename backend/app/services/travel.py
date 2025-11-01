@@ -56,6 +56,15 @@ class TravelService:
         recommendation = self._compose_recommendation(buffer_minutes, bring_items, fallback_used)
         route_url = f"{_SETTINGS.google_maps_base_url}&destination={quote_plus(location)}"
 
+        # Include weather data if available
+        weather_data = None
+        if weather_summary:
+            weather_data = {
+                "rain": weather_summary.get("rain", 0.0),
+                "temp_c": weather_summary.get("temp_c", 20.0),
+                "wind_speed": weather_summary.get("wind_speed", 0.0),
+            }
+
         emit_metric("fallback_rate", 1.0 if fallback_used else 0.0, feature="travel")
         return TravelAdviceResponse(
             leave_time=leave_time,
@@ -63,6 +72,7 @@ class TravelService:
             bring_items=bring_items,
             route_url=route_url,
             fallback_used=fallback_used,
+            weather=weather_data,
         )
 
     async def _fetch_weather(self, location: str) -> dict[str, Any]:
@@ -79,7 +89,7 @@ class TravelService:
             temp_c = payload.get("main", {}).get("temp", 20.0)
             wind = payload.get("wind", {}).get("speed", 3.0)
             buffer_minutes = max(self._fallback_minutes, int(wind))
-            return {"rain": min(rain, 1.0), "temp_c": temp_c, "buffer_minutes": buffer_minutes}
+            return {"rain": min(rain, 1.0), "temp_c": temp_c, "wind_speed": wind, "buffer_minutes": buffer_minutes}
 
     def _compose_recommendation(self, buffer_minutes: int, items: list[str], fallback: bool) -> str:
         base = f"Leave about {buffer_minutes} minutes earlier to stay on schedule."

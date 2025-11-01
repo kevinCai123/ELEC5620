@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import List
 
-from pydantic import Field, HttpUrl, ValidationInfo, field_validator
+from pydantic import EmailStr, Field, HttpUrl, ValidationInfo, field_validator
 
 from app.schemas.common import BaseSchema
 
@@ -23,12 +23,14 @@ class StudyPlanItemRequest(BaseSchema):
 
 class StudyPlanCreateRequest(BaseSchema):
     title: str = Field(min_length=1, max_length=255)
-    items: List[StudyPlanItemRequest]
+    items: List[StudyPlanItemRequest] = Field(min_length=1, max_length=5)
     created_by: str | None = Field(default=None, max_length=128)
+    recipient_email: EmailStr | None = None
 
 
 class StudyPlanCreateResponse(BaseSchema):
     plan_id: int
+    email_sent: bool = False
 
 
 class StudyPlanItemResponse(BaseSchema):

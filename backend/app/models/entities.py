@@ -42,6 +42,9 @@ class PlanItem(Base):
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     due_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     uid: Mapped[str] = mapped_column(String(255), nullable=False)
+    sequence: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0, server_default="0"
+    )
 
     plan: Mapped[Plan] = relationship("Plan", back_populates="items")
 

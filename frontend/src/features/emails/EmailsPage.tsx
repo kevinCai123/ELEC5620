@@ -1,7 +1,7 @@
-﻿import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, Inbox, RefreshCw, Sparkles, CheckCircle2, Tag, Mail, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
@@ -30,13 +30,14 @@ type TopEmailsResponse = {
 type ApiResult<T> = { data?: T; error?: { detail?: string } };
 
 const EMAILS_PER_PAGE = 6;
-const TOTAL_EMAILS = 30;
+const TOTAL_EMAILS = 18;
 
 export function EmailsPage() {
   const [selectedEmail, setSelectedEmail] = useState<EmailSummary | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const queryClient = useQueryClient();
 
-  const { data, isPending, error, refetch } = useQuery({
+  const { data, isPending, error, refetch, isFetching } = useQuery({
     queryKey: EMAILS_QUERY_KEY,
     queryFn: async () => {
       const response = (await apiClient.GET('/emails/top', {
@@ -47,8 +48,16 @@ export function EmailsPage() {
       }
       return response.data as TopEmailsResponse;
     },
-    staleTime: 120_000,
+    staleTime: Infinity, // Never auto-refresh - only manual refresh
+    refetchOnWindowFocus: false, // Don't refetch when window regains focus
+    refetchOnMount: false, // Don't refetch if cache exists (but will fetch if cache is empty = app restart)
+    // Note: When browser is closed/reopened, cache is cleared and query runs automatically
   });
+
+  const handleRefresh = async () => {
+    await refetch();
+  };
+
 
   const isEmpty = data && data.emails.length === 0;
 
@@ -80,14 +89,13 @@ export function EmailsPage() {
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div className="space-y-2">
           <Badge variant="glow">Inbox briefing</Badge>
-          <h1 className="text-3xl font-semibold text-foreground">Unread highlights</h1>
+          <h1 className="text-3xl font-semibold text-foreground">Recent emails</h1>
           <p className="max-w-2xl text-sm text-foreground/65">
-            We surface the most actionable lines so you can decide what needs your attention first. Click a card to view
-            full summary.
+            AI-powered summaries of your 18 most recent emails. Click a card to view full summary and key points.
           </p>
           {data && !isEmpty && (
             <p className="text-sm text-foreground/50">
-              Showing {paginatedEmails.length} of {data.emails.length} emails · Page {currentPage} of {totalPages}
+              Showing {paginatedEmails.length} of {data.emails.length} emails � Page {currentPage} of {totalPages}
             </p>
           )}
           {data?.fallback_used && (
@@ -97,16 +105,16 @@ export function EmailsPage() {
             </div>
           )}
         </div>
-        <Button variant="ghost" glow={false} onClick={() => refetch()} disabled={isPending}>
-          Refresh
-          <RefreshCw className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
+        <Button variant="ghost" glow={false} onClick={handleRefresh} disabled={isPending || isFetching}>
+          {isFetching ? 'Refreshing...' : 'Refresh'}
+          <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
         </Button>
       </div>
 
       {isPending && (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 4 }).map((_, idx) => (
-            <Card key={idx} className="min-h-[120px] border-white/12 bg-white/8">
+            <Card key={idx} className="min-h-[120px] border-foreground/12 bg-foreground/[0.08]">
               <CardHeader className="space-y-2">
                 <div className="flex items-center gap-3">
                   <Skeleton className="h-10 w-10 rounded-full" />
@@ -133,15 +141,15 @@ export function EmailsPage() {
             <CardDescription className="text-red-200/70">{(error as Error).message}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="destructive" onClick={() => refetch()}>
-              Try again
+            <Button variant="destructive" onClick={handleRefresh} disabled={isFetching}>
+              {isFetching ? 'Retrying...' : 'Try again'}
             </Button>
           </CardContent>
         </Card>
       )}
 
       {isEmpty && !error && (
-        <Card className="border-white/10 bg-white/4 text-foreground/70">
+        <Card className="border-foreground/10 bg-foreground/[0.04] text-foreground/70">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-foreground">
               <Inbox className="h-5 w-5 text-primary" />
@@ -152,9 +160,9 @@ export function EmailsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="ghost" glow={false} onClick={() => refetch()}>
-              Refresh now
-              <RefreshCw className="h-4 w-4" />
+            <Button variant="ghost" glow={false} onClick={handleRefresh} disabled={isFetching}>
+              {isFetching ? 'Refreshing...' : 'Refresh now'}
+              <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
             </Button>
           </CardContent>
         </Card>
@@ -168,12 +176,12 @@ export function EmailsPage() {
                 layout
                 key={email.id}
                 onClick={() => setSelectedEmail(email)}
-                className="group relative block min-h-[120px] min-w-0 cursor-pointer overflow-hidden rounded-3xl border border-white/10 bg-white/6 p-6 text-left shadow-glow-md transition duration-300 ease-aurora hover:-translate-y-1 hover:border-white/20 hover:drop-shadow-glow"
+                className="group relative block min-h-[120px] min-w-0 cursor-pointer overflow-hidden rounded-3xl border border-foreground/10 bg-foreground/[0.06] p-6 text-left shadow-glow-md transition duration-300 ease-aurora hover:-translate-y-1 hover:border-foreground/20 hover:drop-shadow-glow"
               >
                 <div className="absolute -right-10 top-0 h-24 w-24 rounded-full bg-aurora opacity-0 blur-2xl transition duration-300 group-hover:opacity-50" />
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-sm font-semibold text-foreground">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full border border-foreground/10 bg-foreground/[0.05] text-sm font-semibold text-foreground">
                       {email.sender.slice(0, 2).toUpperCase()}
                     </span>
                     <div className="min-w-0 flex-1">
@@ -223,7 +231,7 @@ export function EmailsPage() {
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div className="flex items-center justify-between gap-4 rounded-2xl border border-foreground/10 bg-foreground/[0.05] p-4">
               <Button
                 variant="ghost"
                 onClick={handlePreviousPage}
@@ -245,7 +253,7 @@ export function EmailsPage() {
                     className={`flex h-10 w-10 items-center justify-center rounded-lg border transition ${
                       page === currentPage
                         ? 'border-primary bg-primary/20 font-semibold text-primary'
-                        : 'border-white/10 bg-white/5 text-foreground/60 hover:border-white/20 hover:bg-white/10'
+                        : 'border-foreground/10 bg-foreground/[0.05] text-foreground/60 hover:border-foreground/20 hover:bg-foreground/10'
                     }`}
                   >
                     {page}
@@ -272,7 +280,7 @@ export function EmailsPage() {
                 <>
                   <DialogHeader>
                     <div className="flex items-start gap-4">
-                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-base font-semibold text-foreground">
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-foreground/10 bg-foreground/[0.05] text-base font-semibold text-foreground">
                         {selectedEmail.sender.slice(0, 2).toUpperCase()}
                       </span>
                       <div className="min-w-0 flex-1">
@@ -309,7 +317,7 @@ export function EmailsPage() {
                           {selectedEmail.key_points.map((point, idx) => (
                             <div
                               key={idx}
-                              className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4"
+                              className="flex items-start gap-3 rounded-xl border border-foreground/10 bg-foreground/[0.05] p-4"
                             >
                               <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                               <p className="text-sm text-foreground/80">{point}</p>
@@ -321,7 +329,7 @@ export function EmailsPage() {
 
                     {/* Open Original Link */}
                     {selectedEmail.original_url && (
-                      <div className="flex justify-end border-t border-white/10 pt-4">
+                      <div className="flex justify-end border-t border-foreground/10 pt-4">
                         <Button asChild variant="primary">
                           <a
                             href={selectedEmail.original_url}
