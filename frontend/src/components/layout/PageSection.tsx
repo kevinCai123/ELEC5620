@@ -5,5 +5,5 @@ import { cn } from '../../lib/utils';
 type PageSectionProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function PageSection({ className, ...props }: PageSectionProps) {
-  return <div className={cn('mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-10', className)} {...props} />;
+  return <div className={cn('mx-auto w-full max-w-[1350px] px-3 sm:px-5 lg:px-6 xl:px-8', className)} {...props} />;
 }

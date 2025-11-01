@@ -12,7 +12,19 @@ from app.api import api_router
 from app.api.deps import get_digest_service
 from app.core.config import get_settings
 from app.core.logging import RequestLoggingMiddleware, configure_logging
-from app.db.session import get_session
+from app.db.base import Base
+from app.db.session import engine, get_session
+# Import models so Base.metadata knows about them
+from app.models.entities import (  # noqa: F401
+    DigestDeliveryLog,
+    Plan,
+    PlanItem,
+    Quiz,
+    QuizAttempt,
+    SearchHistory,
+    Todo,
+    UserPreference,
+)
 try:
     from apscheduler.schedulers.asyncio import AsyncIOScheduler
 except ImportError as exc:  # pragma: no cover
@@ -66,6 +78,10 @@ scheduler = AsyncIOScheduler(timezone=ZoneInfo(settings.default_timezone))
 
 @app.on_event("startup")
 async def on_startup() -> None:
+    # Create database tables
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    
     if not scheduler.running:
         scheduler.start()
     scheduler.add_job(run_digest_job, "interval", minutes=1, id="digest_job", replace_existing=True)

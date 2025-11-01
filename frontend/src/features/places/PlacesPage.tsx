@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { Compass, Loader2, MapPinned, Search } from 'lucide-react';
@@ -62,7 +62,7 @@ export function PlacesPage() {
 
   return (
     <section className="min-w-0 space-y-8">
-      <Card className="min-w-0 border-white/12 bg-white/8">
+      <Card className="min-w-0 border-foreground/12 bg-foreground/[0.08]">
         <CardHeader className="space-y-3">
           <Badge variant="glow">Campus atlas</Badge>
           <CardTitle className="flex items-center gap-3 text-2xl">
@@ -70,7 +70,7 @@ export function PlacesPage() {
             Campus location lookup
           </CardTitle>
           <CardDescription>
-            Find buildings, study spots, and services with fuzzy search. hover a result to preview the quickest walking route.
+            Find University of Sydney buildings, study spots, and services. Click "Route" to get walking directions from your current location.
           </CardDescription>
         </CardHeader>
         <CardContent className="min-w-0 space-y-6">
@@ -93,7 +93,7 @@ export function PlacesPage() {
 
           <div className="space-y-3">
             {resultsQuery.isLoading && (
-              <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-foreground/70">
+              <div className="flex items-center gap-2 rounded-2xl border border-foreground/10 bg-foreground/[0.05] px-4 py-3 text-sm text-foreground/70">
                 <Loader2 className="h-4 w-4 animate-spin" /> Searching campus map
               </div>
             )}
@@ -115,13 +115,13 @@ export function PlacesPage() {
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.04 }}
-                    className="group flex min-w-0 flex-col gap-3 rounded-3xl border border-white/10 bg-white/6 p-5 shadow-soft-inner md:flex-row md:items-center md:justify-between"
+                    className="group flex min-w-0 flex-col gap-3 rounded-3xl border border-foreground/10 bg-foreground/[0.06] p-5 shadow-soft-inner md:flex-row md:items-center md:justify-between"
                   >
                     <div className="min-w-0 space-y-2">
                       <div className="flex flex-wrap items-center gap-3">
                         <h2 className="text-lg font-semibold text-foreground break-words">{place.name}</h2>
                         <Badge variant="outline" className="shrink-0 text-xs text-foreground/60">
-                          {place.tags.slice(0, 3).join(' · ') || 'General'}
+                          {place.tags.slice(0, 3).join(' � ') || 'General'}
                         </Badge>
                       </div>
                       {place.description ? (
@@ -141,7 +141,11 @@ export function PlacesPage() {
                       className="inline-flex items-center justify-between gap-2 self-start rounded-xl px-4 py-2 md:self-auto"
                     >
                       <a
-                        href={`https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=${encodeURIComponent(place.name)}`}
+                        href={
+                          place.latitude && place.longitude
+                            ? `https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=${place.latitude},${place.longitude}`
+                            : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name + ' University of Sydney')}`
+                        }
                         target="_blank"
                         rel="noopener noreferrer"
                       >

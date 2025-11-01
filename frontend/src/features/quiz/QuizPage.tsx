@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useMutation } from '@tanstack/react-query';
 import { ChevronDown, GraduationCap, PartyPopper, Sparkles } from 'lucide-react';
@@ -30,6 +30,8 @@ export function QuizPage() {
   const [notes, setNotes] = useState('');
   const [topic, setTopic] = useState('');
   const [openRationaleIndex, setOpenRationaleIndex] = useState<number | null>(null);
+  const [selectedAnswers, setSelectedAnswers] = useState<Map<number, number>>(new Map());
+  
   const mutation = useMutation({
     mutationFn: async () => {
       const response = (await apiClient.POST('/study/quiz', { body: { notes, topic: topic || undefined } })) as ApiResult<QuizResponse>;
@@ -38,7 +40,22 @@ export function QuizPage() {
       }
       return response.data as QuizResponse;
     },
+    onSuccess: () => {
+      // Reset selected answers when generating new quiz
+      setSelectedAnswers(new Map());
+      setOpenRationaleIndex(null);
+    },
   });
+
+  const handleSelectAnswer = (questionIndex: number, optionIndex: number) => {
+    setSelectedAnswers((prev) => {
+      const next = new Map(prev);
+      next.set(questionIndex, optionIndex);
+      return next;
+    });
+    // Auto-open rationale after selection
+    setOpenRationaleIndex(questionIndex);
+  };
 
   const duplicateRate = useMemo(() => {
     if (!mutation.data) return null;
@@ -47,7 +64,7 @@ export function QuizPage() {
 
   return (
     <section className="min-w-0 space-y-8">
-      <Card className="min-w-0 border-white/12 bg-white/8">
+      <Card className="min-w-0 border-foreground/12 bg-foreground/[0.08]">
         <CardHeader className="space-y-3">
           <Badge variant="glow">Quiz generator</Badge>
           <CardTitle className="flex items-center gap-3 text-2xl">
@@ -82,7 +99,7 @@ export function QuizPage() {
                   value={notes}
                   onChange={(event) => setNotes(event.target.value)}
                   placeholder="Paste lecture notes, meeting highlights, or reading summaries..."
-                  className="min-h-[240px] w-full max-w-full"
+                  className="min-h-[240px] w-full max-w-[calc(100%-50px)]"
                   required
                 />
               </div>
@@ -119,13 +136,16 @@ export function QuizPage() {
         <div className="space-y-6">
           {mutation.data.items.map((item, index) => {
             const isOpen = openRationaleIndex === index;
+            const selectedAnswer = selectedAnswers.get(index);
+            const hasAnswered = selectedAnswer !== undefined;
+            
             return (
               <motion.div
                 key={`${item.stem}-${index}`}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: index * 0.03 }}
-                className="relative min-w-0 overflow-hidden rounded-3xl border border-white/12 bg-white/8 p-6 shadow-glow-md"
+                className="relative min-w-0 overflow-hidden rounded-3xl border border-foreground/12 bg-foreground/[0.08] p-6 shadow-glow-md"
               >
                 <div className="absolute inset-x-[-20%] -top-32 h-64 rounded-full bg-aurora/30 blur-[120px]" />
                 <div className="relative space-y-4">
@@ -142,41 +162,74 @@ export function QuizPage() {
                   <div className="space-y-2">
                     {item.options.map((option, optionIndex) => {
                       const isCorrect = optionIndex === item.answer_index;
+                      const isSelected = selectedAnswer === optionIndex;
+                      const showResult = hasAnswered;
+                      
+                      let styling = 'border-foreground/10 bg-foreground/[0.04] text-foreground/80 cursor-pointer hover:border-foreground/20 hover:bg-foreground/[0.08]';
+                      
+                      if (showResult) {
+                        if (isCorrect) {
+                          styling = 'border-emerald-400/50 bg-emerald-500/10 text-emerald-100';
+                        } else if (isSelected && !isCorrect) {
+                          styling = 'border-red-400/50 bg-red-500/10 text-red-100';
+                        }
+                      }
+                      
                       return (
-                        <motion.div
+                        <motion.button
                           key={optionIndex}
-                          whileHover={{ y: -2, scale: 1.01 }}
-                          className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm transition duration-200 ${
-                            isCorrect
-                              ? 'border-emerald-400/50 bg-emerald-500/10 text-emerald-100'
-                              : 'border-white/10 bg-white/4 text-foreground/80'
-                          }`}
+                          type="button"
+                          disabled={hasAnswered}
+                          onClick={() => !hasAnswered && handleSelectAnswer(index, optionIndex)}
+                          whileHover={!hasAnswered ? { y: -2, scale: 1.01 } : {}}
+                          className={`flex w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left text-sm transition duration-200 disabled:cursor-default ${styling}`}
                         >
-                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xs font-semibold uppercase tracking-[0.18em]">
+                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-foreground/10 bg-foreground/10 text-xs font-semibold uppercase tracking-[0.18em]">
                             {String.fromCharCode(65 + optionIndex)}
                           </span>
                           <span className="min-w-0 flex-1 break-words">{option}</span>
-                          {isCorrect && <Badge variant="success">Correct</Badge>}
-                        </motion.div>
+                          {showResult && isCorrect && <Badge variant="success">Correct</Badge>}
+                          {showResult && isSelected && !isCorrect && <Badge className="bg-red-500/90 text-white">Wrong</Badge>}
+                        </motion.button>
                       );
                     })}
                   </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    glow={false}
-                    onClick={() => setOpenRationaleIndex(isOpen ? null : index)}
-                    className="inline-flex items-center gap-2 rounded-lg text-sm text-foreground/70"
-                  >
-                    View rationale
-                    <ChevronDown className={`h-4 w-4 transition ${isOpen ? 'rotate-180' : ''}`} />
-                  </Button>
-                  {isOpen && (
+                  {hasAnswered && selectedAnswer === item.answer_index && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="rounded-2xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100"
+                    >
+                      ? Correct! Great job!
+                    </motion.div>
+                  )}
+                  {hasAnswered && selectedAnswer !== item.answer_index && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-100"
+                    >
+                      ? Incorrect. The correct answer is {String.fromCharCode(65 + item.answer_index)}.
+                    </motion.div>
+                  )}
+                  {hasAnswered && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      glow={false}
+                      onClick={() => setOpenRationaleIndex(isOpen ? null : index)}
+                      className="inline-flex items-center gap-2 rounded-lg text-sm text-foreground/70"
+                    >
+                      {isOpen ? 'Hide' : 'View'} rationale
+                      <ChevronDown className={`h-4 w-4 transition ${isOpen ? 'rotate-180' : ''}`} />
+                    </Button>
+                  )}
+                  {isOpen && hasAnswered && (
                     <motion.p
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3 text-sm text-foreground/75 whitespace-pre-wrap break-words"
+                      className="rounded-2xl border border-foreground/10 bg-foreground/[0.06] px-4 py-3 text-sm text-foreground/75 whitespace-pre-wrap break-words"
                     >
                       {item.rationale}
                     </motion.p>

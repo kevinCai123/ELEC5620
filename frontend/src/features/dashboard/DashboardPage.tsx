@@ -1,8 +1,10 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   ArrowRight,
+  BookOpenCheck,
   Brain,
   CalendarClock,
+  Code2,
   GraduationCap,
   Mail,
   Map,
@@ -36,11 +38,11 @@ const quickActions = [
     accent: 'from-violet-400/40 to-cyan-300/20',
   },
   {
-    title: 'Add deadlines (ICS)',
-    description: 'Export milestones straight to Calendar.',
-    to: '/study/plan',
-    icon: CalendarClock,
-    accent: 'from-emerald-400/35 to-teal-500/20',
+    title: 'Generate code',
+    description: 'Describe what you need and AI writes the code.',
+    to: '/code/generate',
+    icon: Code2,
+    accent: 'from-blue-400/35 to-purple-500/20',
   },
   {
     title: 'Travel advice',
@@ -50,10 +52,17 @@ const quickActions = [
     accent: 'from-amber-400/35 to-pink-400/15',
   },
   {
-    title: 'Extract tasks',
-    description: 'Convert messy notes into actionable to-dos.',
-    to: '/todo',
-    icon: Timer,
+    title: 'Email digest',
+    description: 'AI-powered summary of your recent emails.',
+    to: '/digest/preview',
+    icon: BookOpenCheck,
+    accent: 'from-emerald-400/35 to-teal-500/20',
+  },
+  {
+    title: 'Study plan',
+    description: 'Create and export a study milestone to calendar.',
+    to: '/plan',
+    icon: CalendarClock,
     accent: 'from-rose-400/35 to-indigo-500/25',
   },
 ];
@@ -77,7 +86,7 @@ export function DashboardPage() {
           <div className="absolute left-1/2 top-[-30%] h-[320px] w-[540px] -translate-x-1/2 rounded-full bg-aurora opacity-40 blur-3xl" />
           <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-2xl space-y-4">
-              <Badge variant="glow" className="inline-flex items-center gap-2 bg-white/10 text-sm tracking-[0.3em]">
+              <Badge variant="glow" className="inline-flex items-center gap-2 bg-foreground/10 text-sm tracking-[0.3em]">
                 <Sparkles className="h-3.5 w-3.5" />
                 Insider
               </Badge>
@@ -87,10 +96,10 @@ export function DashboardPage() {
                 transition={{ delay: 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                 className="text-3xl font-semibold text-foreground sm:text-4xl lg:text-5xl"
               >
-                Your personal assistant for everything uni — powered by adaptive AI workflows.
+                Your personal assistant for everything uni � powered by adaptive AI workflows.
               </motion.h1>
               <p className="text-base text-foreground/70 sm:text-lg">
-                Jump into the workflows that matter today. We’ve lined up your inbox insights, study plan, and smart
+                Jump into the workflows that matter today. We�ve lined up your inbox insights, planning hub, and smart
                 automation shortcuts so you can stay in flow.
               </p>
               <div className="flex flex-wrap gap-3">
@@ -108,26 +117,26 @@ export function DashboardPage() {
                 </Button>
               </div>
             </div>
-            <div className="relative w-full max-w-sm rounded-3xl border border-white/10 bg-white/5 p-6 text-sm shadow-glow-md backdrop-blur-lg">
+            <div className="relative w-full max-w-sm rounded-3xl border border-foreground/10 bg-foreground/[0.05] p-6 text-sm shadow-glow-md backdrop-blur-lg">
               <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-aurora opacity-30 blur-3xl" />
               <p className="text-xs uppercase tracking-[0.35em] text-foreground/50">This week</p>
               <h2 className="mt-2 text-2xl font-semibold text-foreground">Momentum tracker</h2>
               <div className="mt-4 grid gap-3 text-sm">
-                <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 shadow-soft-inner">
+                <div className="flex items-center justify-between rounded-xl border border-foreground/10 bg-foreground/[0.05] px-4 py-3 shadow-soft-inner">
                   <div className="flex items-center gap-2 text-foreground/70">
                     <Mail className="h-4 w-4" />
                     Emails summarised
                   </div>
                   <span className="text-foreground font-semibold">12</span>
                 </div>
-                <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 shadow-soft-inner">
+                <div className="flex items-center justify-between rounded-xl border border-foreground/10 bg-foreground/[0.05] px-4 py-3 shadow-soft-inner">
                   <div className="flex items-center gap-2 text-foreground/70">
                     <GraduationCap className="h-4 w-4" />
-                    Study milestones
+                    Plan milestone
                   </div>
-                  <span className="text-foreground font-semibold">5</span>
+                  <span className="text-foreground font-semibold">1</span>
                 </div>
-                <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 shadow-soft-inner">
+                <div className="flex items-center justify-between rounded-xl border border-foreground/10 bg-foreground/[0.05] px-4 py-3 shadow-soft-inner">
                   <div className="flex items-center gap-2 text-foreground/70">
                     <Brain className="h-4 w-4" />
                     Quizzes generated
@@ -156,17 +165,17 @@ export function DashboardPage() {
           </Button>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-x-4 gap-y-[66px] md:grid-cols-2 xl:grid-cols-3">
           {quickActions.map((action) => (
             <Link key={action.title} to={action.to} className="group h-full">
-              <Card className="relative h-full overflow-hidden border-white/12 bg-white/10">
+              <Card className="relative h-full overflow-hidden border-foreground/12 bg-foreground/10">
                 <div
                   className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${action.accent} opacity-0 transition duration-300 group-hover:opacity-100`}
                 />
                 <CardContent className="relative flex h-full flex-col gap-3 p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 text-sm text-foreground/60">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/10 text-foreground">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-foreground/10 bg-foreground/10 text-foreground">
                         <action.icon className="h-5 w-5" />
                       </div>
                       <span className="text-sm font-medium uppercase tracking-[0.28em] text-foreground/50">
@@ -185,7 +194,7 @@ export function DashboardPage() {
       </section>
 
       <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <Card className="border-white/12 bg-white/8">
+        <Card className="border-foreground/12 bg-foreground/[0.08]">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <Rocket className="h-5 w-5 text-primary" />
@@ -193,7 +202,7 @@ export function DashboardPage() {
             </CardTitle>
             <CardDescription>Staying consistent keeps the AI helper learning your preferences.</CardDescription>
           </CardHeader>
-          <CardContent className="h-48">
+          <CardContent className="h-[148px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={usageSparkline}>
                 <defs>
@@ -219,7 +228,7 @@ export function DashboardPage() {
         </Card>
 
         <div className="grid gap-4">
-          <Card className="border-white/12 bg-white/8">
+          <Card className="border-foreground/12 bg-foreground/[0.08]">
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-primary" />
@@ -233,7 +242,7 @@ export function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-white/12 bg-white/8">
+          <Card className="border-foreground/12 bg-foreground/[0.08]">
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
                 <Brain className="h-4 w-4 text-primary" />
@@ -247,13 +256,13 @@ export function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-white/12 bg-white/8">
+          <Card className="border-foreground/12 bg-foreground/[0.08]">
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
                 <Timer className="h-4 w-4 text-primary" />
                 Tasks extracted
               </CardTitle>
-              <CardDescription>Across to-do and study plan automations.</CardDescription>
+              <CardDescription>Across to-do and plan automations.</CardDescription>
             </CardHeader>
             <CardContent className="flex items-center justify-between">
               <span className="text-2xl font-semibold text-foreground">34</span>

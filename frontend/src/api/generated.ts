@@ -373,11 +373,15 @@ export interface components {
             items: components["schemas"]["StudyPlanItemRequest"][];
             /** Created By */
             created_by?: string | null;
+            /** Recipient Email */
+            recipient_email?: string | null;
         };
         /** StudyPlanCreateResponse */
         StudyPlanCreateResponse: {
             /** Plan Id */
             plan_id: number;
+            /** Email Sent */
+            email_sent: boolean;
         };
         /** StudyPlanItemRequest */
         StudyPlanItemRequest: {

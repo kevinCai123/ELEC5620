@@ -1,47 +1,92 @@
 [
   {
-    "id": "library",
-    "name": "Main Campus Library",
-    "description": "Quiet study spaces and research support",
-    "aliases": ["library", "info commons"],
-    "tags": ["study", "resources"],
-    "latitude": -33.9173,
-    "longitude": 151.2313
+    "id": "fisher-library",
+    "name": "Fisher Library",
+    "description": "Main university library with extensive collections and study spaces",
+    "aliases": ["fisher", "main library", "lib"],
+    "tags": ["study", "resources", "books"],
+    "latitude": -33.8886,
+    "longitude": 151.1873
+  },
+  {
+    "id": "quadrangle",
+    "name": "Quadrangle Building",
+    "description": "Historic sandstone building, iconic USYD landmark",
+    "aliases": ["quad", "main quad", "quadrangle"],
+    "tags": ["historic", "landmark", "admin"],
+    "latitude": -33.8876,
+    "longitude": 151.1873
   },
   {
     "id": "engineering",
-    "name": "Engineering Building",
-    "description": "Labs and lecture theatres for engineering",
-    "aliases": ["eng", "engineering faculty"],
-    "tags": ["lectures", "labs"],
-    "latitude": -33.9175,
-    "longitude": 151.2306
+    "name": "Faculty of Engineering",
+    "description": "Engineering lecture theatres, labs, and facilities",
+    "aliases": ["eng", "engineering building", "J05"],
+    "tags": ["lectures", "labs", "engineering"],
+    "latitude": -33.8887,
+    "longitude": 151.1903
   },
   {
-    "id": "food-court",
-    "name": "Campus Food Court",
-    "description": "Variety of food options and seating",
-    "aliases": ["food", "canteen"],
-    "tags": ["food", "social"],
-    "latitude": -33.9169,
-    "longitude": 151.2301
+    "id": "manning-house",
+    "name": "Manning House",
+    "description": "Student hub with food, bars, and social spaces",
+    "aliases": ["manning", "manning bar"],
+    "tags": ["food", "social", "bar"],
+    "latitude": -33.8885,
+    "longitude": 151.1893
   },
   {
-    "id": "gym",
-    "name": "Sports & Aquatic Centre",
-    "description": "Gym, pool, and group classes",
-    "aliases": ["sports centre", "gym"],
-    "tags": ["fitness", "sports"],
-    "latitude": -33.9182,
-    "longitude": 151.2325
+    "id": "sports-centre",
+    "name": "University Sports & Aquatic Centre",
+    "description": "Gym, pool, sports facilities, and fitness classes",
+    "aliases": ["usac", "gym", "sports centre", "pool"],
+    "tags": ["fitness", "sports", "pool"],
+    "latitude": -33.8890,
+    "longitude": 151.1845
   },
   {
-    "id": "innovation",
-    "name": "Innovation Hub",
-    "description": "Co-working and startup support",
-    "aliases": ["hub", "startup space"],
-    "tags": ["innovation", "coworking"],
-    "latitude": -33.9189,
-    "longitude": 151.2298
+    "id": "eastern-avenue",
+    "name": "Eastern Avenue",
+    "description": "Main campus thoroughfare with cafes and shops",
+    "aliases": ["eastern ave", "wentworth"],
+    "tags": ["food", "shopping", "social"],
+    "latitude": -33.8881,
+    "longitude": 151.1899
+  },
+  {
+    "id": "law-school",
+    "name": "Sydney Law School",
+    "description": "Law faculty building with lecture theatres and library",
+    "aliases": ["law", "law building", "F10"],
+    "tags": ["lectures", "law", "study"],
+    "latitude": -33.8889,
+    "longitude": 151.1883
+  },
+  {
+    "id": "business-school",
+    "name": "Business School Building",
+    "description": "Modern business school with lecture theatres and collaborative spaces",
+    "aliases": ["business", "abercrombie", "H70"],
+    "tags": ["lectures", "business", "study"],
+    "latitude": -33.8872,
+    "longitude": 151.1909
+  },
+  {
+    "id": "anderson-stuart",
+    "name": "Anderson Stuart Building",
+    "description": "Medical sciences and anatomy building",
+    "aliases": ["anderson stuart", "F13", "anatomy"],
+    "tags": ["lectures", "medical", "labs"],
+    "latitude": -33.8895,
+    "longitude": 151.1888
+  },
+  {
+    "id": "ict-building",
+    "name": "Information & Communication Technology Building",
+    "description": "Computer labs and IT support services",
+    "aliases": ["ict", "computer labs", "J12"],
+    "tags": ["labs", "computers", "technology"],
+    "latitude": -33.8883,
+    "longitude": 151.1906
   }
 ]

@@ -30,3 +30,12 @@ class DigestPreviewSection(BaseSchema):
 class DigestPreviewResponse(BaseSchema):
     generated_at: datetime
     sections: List[DigestPreviewSection]
+
+
+class DigestEmailRequest(BaseSchema):
+    recipient_email: str = Field(min_length=1, description="Email address to send the digest to")
+
+
+class DigestEmailResponse(BaseSchema):
+    success: bool
+    message: str

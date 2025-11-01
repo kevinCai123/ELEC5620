@@ -1,7 +1,8 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useMutation } from '@tanstack/react-query';
-import { BellRing, Palette, ShieldCheck } from 'lucide-react';
+import { BellRing, Palette, ShieldCheck, LogOut, User } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
@@ -50,7 +51,7 @@ export function SettingsPage() {
 
   return (
     <section className="space-y-8">
-      <Card className="border-white/12 bg-white/8">
+      <Card className="border-foreground/12 bg-foreground/[0.08]">
         <CardHeader className="space-y-3">
           <Badge variant="glow">Preferences</Badge>
           <CardTitle className="flex items-center gap-3 text-2xl">
@@ -62,7 +63,7 @@ export function SettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/6 p-4 shadow-soft-inner">
+          <div className="flex items-center justify-between rounded-2xl border border-foreground/10 bg-foreground/[0.06] p-4 shadow-soft-inner">
             <div>
               <p className="text-sm font-semibold text-foreground">Enable daily digest</p>
               <p className="text-xs text-foreground/55">Send a morning summary to your inbox.</p>
@@ -109,7 +110,7 @@ export function SettingsPage() {
         </CardContent>
       </Card>
 
-      <Card className="border-white/12 bg-white/8">
+      <Card className="border-foreground/12 bg-foreground/[0.08]">
         <CardHeader className="space-y-2">
           <CardTitle className="flex items-center gap-3">
             <Palette className="h-5 w-5 text-primary" />
@@ -125,7 +126,7 @@ export function SettingsPage() {
         </CardContent>
       </Card>
 
-      <Card className="border-white/12 bg-white/8">
+      <Card className="border-foreground/12 bg-foreground/[0.08]">
         <CardHeader className="space-y-2">
           <CardTitle className="flex items-center gap-3">
             <ShieldCheck className="h-5 w-5 text-primary" />
@@ -135,12 +136,42 @@ export function SettingsPage() {
         </CardHeader>
         <CardContent className="space-y-2 text-sm text-foreground/65">
           <p>We only store the settings you configure above along with a hashed user identifier.</p>
-          <p>You can reset preferences anytime—this clears the digest schedule on the server immediately.</p>
+          <p>You can reset preferences anytime�this clears the digest schedule on the server immediately.</p>
           <Button type="button" variant="ghost" glow={false} className="px-0 text-foreground/70">
             View data retention policy
           </Button>
         </CardContent>
       </Card>
+
+      <AccountSection />
     </section>
+  );
+}
+
+function AccountSection() {
+  const { user, logout } = useAuth();
+
+  return (
+    <Card className="border-foreground/12 bg-foreground/[0.08]">
+      <CardHeader className="space-y-2">
+        <CardTitle className="flex items-center gap-3">
+          <User className="h-5 w-5 text-primary" />
+          Account
+        </CardTitle>
+        <CardDescription>Manage your account settings</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex items-center justify-between rounded-xl border border-foreground/10 bg-foreground/[0.05] px-4 py-3">
+          <div>
+            <p className="text-sm font-medium text-foreground">Signed in as</p>
+            <p className="text-sm text-foreground/70">{user?.email || 'Guest'}</p>
+          </div>
+        </div>
+        <Button type="button" variant="ghost" onClick={logout} className="gap-2">
+          <LogOut className="h-4 w-4" />
+          Sign Out
+        </Button>
+      </CardContent>
+    </Card>
   );
 }

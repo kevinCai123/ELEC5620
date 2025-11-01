@@ -1,4 +1,4 @@
-﻿import * as React from 'react';
+import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
@@ -11,13 +11,13 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          'bg-primary text-background shadow-glow-md hover:shadow-glow-lg focus-visible:ring-primary/60 active:scale-[0.98]',
+          'bg-primary text-primary-foreground shadow-glow-md hover:shadow-glow-lg focus-visible:ring-primary/60 active:scale-[0.98]',
         secondary:
-          'border border-white/12 bg-white/10 text-foreground backdrop-blur-md hover:bg-white/15 active:scale-[0.985]',
+          'border border-foreground/12 bg-foreground/10 text-foreground backdrop-blur-md hover:bg-foreground/15 active:scale-[0.985]',
         ghost:
-          'bg-transparent text-foreground/80 hover:text-foreground hover:bg-white/8 active:scale-[0.985]',
+          'bg-transparent text-foreground/80 hover:text-foreground hover:bg-foreground/[0.08] active:scale-[0.985]',
         outline:
-          'border border-white/15 bg-transparent text-foreground/80 hover:border-white/25 hover:bg-white/8 active:scale-[0.985]',
+          'border border-foreground/15 bg-transparent text-foreground/80 hover:border-foreground/25 hover:bg-foreground/[0.08] active:scale-[0.985]',
         destructive:
           'bg-red-500/90 text-white hover:bg-red-500 focus-visible:ring-red-500/60 active:scale-[0.98]',
         subtle:

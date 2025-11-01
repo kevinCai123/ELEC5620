@@ -11,7 +11,7 @@ const Command = React.forwardRef<
   <CommandPrimitive
     ref={ref}
     className={cn(
-      'flex h-full w-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-background/95 text-foreground shadow-glow-md backdrop-blur-2xl',
+      'flex h-full w-full flex-col overflow-hidden rounded-3xl border border-foreground/10 bg-background/95 text-foreground shadow-glow-md backdrop-blur-2xl',
       className,
     )}
     {...props}
@@ -23,7 +23,7 @@ const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-  <div className="flex items-center gap-3 border-b border-white/10 px-5 py-3 text-foreground/70">
+  <div className="flex items-center gap-3 border-b border-foreground/10 px-5 py-3 text-foreground/70">
     <Search className="h-4 w-4 opacity-60" aria-hidden="true" />
     <CommandPrimitive.Input
       ref={ref}
@@ -33,7 +33,7 @@ const CommandInput = React.forwardRef<
       )}
       {...props}
     />
-    <span className="rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-foreground/50">
+    <span className="rounded-md border border-foreground/10 bg-foreground/[0.05] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-foreground/50">
       Enter
     </span>
   </div>
@@ -58,7 +58,7 @@ const CommandEmpty = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.Empty
     ref={ref}
-    className={cn('rounded-xl border border-white/10 bg-white/5 p-6 text-center text-sm text-foreground/60', className)}
+    className={cn('rounded-xl border border-foreground/10 bg-foreground/[0.05] p-6 text-center text-sm text-foreground/60', className)}
     {...props}
   />
 ));
@@ -71,7 +71,7 @@ const CommandGroup = React.forwardRef<
   <CommandPrimitive.Group
     ref={ref}
     className={cn(
-      'space-y-1 rounded-xl border border-white/5 bg-white/3 p-3 text-sm text-foreground/70 shadow-soft-inner',
+      'space-y-1 rounded-xl border border-foreground/[0.05] bg-foreground/[0.03] p-3 text-sm text-foreground/70 shadow-soft-inner',
       className,
     )}
     {...props}
@@ -86,7 +86,7 @@ const CommandItem = React.forwardRef<
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
-      'flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground/80 transition duration-150 aria-selected:bg-white/10 aria-selected:text-foreground',
+      'flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground/80 transition duration-150 aria-selected:bg-foreground/10 aria-selected:text-foreground',
       className,
     )}
     {...props}
@@ -100,7 +100,7 @@ const CommandSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.Separator
     ref={ref}
-    className={cn('my-2 h-px bg-white/10', className)}
+    className={cn('my-2 h-px bg-foreground/10', className)}
     {...props}
   />
 ));

@@ -24,7 +24,11 @@ except ImportError:
     sys.exit(1)
 
 # Configuration
-SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+SCOPES = [
+    "https://www.googleapis.com/auth/gmail.readonly",
+    "https://www.googleapis.com/auth/gmail.send",
+    "https://www.googleapis.com/auth/calendar.events",
+]
 REDIRECT_URI = 'http://localhost:8080/'
 
 print("\n" + "=" * 70)
@@ -37,13 +41,23 @@ print("""
    - Go to "APIs & Services" → "Library"
    - Search for "Gmail API"
    - Click "Enable"
-4. Create OAuth credentials:
+4. Enable Google Calendar API:
+   - Still in the Library, search for "Google Calendar API"
+   - Click "Enable"
+5. Create OAuth credentials:
    - Go to "APIs & Services" → "Credentials"
    - Click "CREATE CREDENTIALS" → "OAuth client ID"
    - Application type: "Desktop app"
    - Name: "Study Companion"
    - Click "Create"
-5. Download the JSON file or copy the Client ID and Client Secret
+6. Configure scopes:
+   - Click "Add or remove scopes"
+   - Enable:
+       • https://www.googleapis.com/auth/gmail.readonly
+       • https://www.googleapis.com/auth/gmail.send
+       • https://www.googleapis.com/auth/calendar.events
+   - Save your changes
+7. Download the JSON file or copy the Client ID and Client Secret
 """)
 
 print("=" * 70)

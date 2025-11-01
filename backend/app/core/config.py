@@ -40,6 +40,7 @@ class Settings(BaseSettings):
     google_refresh_token: str | None = Field(default=None, alias="GOOGLE_REFRESH_TOKEN")
     google_api_user_email: str | None = Field(default=None, alias="GOOGLE_API_USER_EMAIL")
     google_redirect_uri: str | None = Field(default=None, alias="GOOGLE_REDIRECT_URI")
+    google_calendar_id: str | None = Field(default=None, alias="GOOGLE_CALENDAR_ID")
     frontend_origin: str | None = Field(default=None, alias="FRONTEND_ORIGIN")
     dev_allow_oauth_write_dotenv: bool = Field(default=False, alias="DEV_ALLOW_OAUTH_WRITE_DOTENV")
     default_weather_location: str = Field(default="Sydney,AU", alias="DEFAULT_WEATHER_LOCATION")
@@ -48,6 +49,8 @@ class Settings(BaseSettings):
     smtp_port: int | None = Field(default=None, alias="SMTP_PORT")
     smtp_user: str | None = Field(default=None, alias="SMTP_USER")
     smtp_pass: str | None = Field(default=None, alias="SMTP_PASS")
+    smtp_use_tls: bool = Field(default=False, alias="SMTP_USE_TLS")
+    smtp_use_ssl: bool = Field(default=False, alias="SMTP_USE_SSL")
 
     default_timezone: str = "Australia/Sydney"
     generic_travel_buffer_minutes: int = Field(default=15, alias="GENERIC_TRAVEL_BUFFER_MINUTES")
@@ -70,6 +73,7 @@ class Settings(BaseSettings):
         "smtp_user",
         "smtp_pass",
         "vite_api_base_url",
+        "google_calendar_id",
         "google_client_id",
         "google_client_secret",
         "google_refresh_token",

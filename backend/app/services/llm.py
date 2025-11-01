@@ -17,9 +17,7 @@ from langchain_core.runnables import RunnableSerializable
 
 from app.core.config import get_settings
 from app.schemas.quiz import QuizItem
-from app.schemas.study import SummaryNote, SummaryQnASeed, SummarySection
-from app.schemas.todo import TodoDraft
-from app.services.cache import cache
+from app.schemas.study import SummaryNote, SummarySection
 from app.services.rag import get_retriever
 
 try:
@@ -35,10 +33,6 @@ QUIZ_DUPLICATE_THRESHOLD = 90
 
 class QuizBatch(BaseModel):
     items: List[QuizItem] = Field(min_length=5, max_length=5)
-
-
-class TodoBatch(BaseModel):
-    items: List[TodoDraft] = Field(min_length=1, max_length=10)
 
 
 class EmailAnalysis(BaseModel):
@@ -76,7 +70,9 @@ class LLMService:
             return None
         model = self.settings.openai_model
         os.environ.setdefault("OPENAI_API_KEY", api_key)
-        llm = ChatOpenAI(model=model, temperature=0.2, timeout=20, max_retries=1)
+        # Timeout extended to 20 minutes for demo environments with slow network speeds.
+        # max_retries=3 for better reliability on unstable connections
+        llm = ChatOpenAI(model=model, temperature=0.2, timeout=1200, max_retries=3)
         logger.info("ChatOpenAI initialised", extra={"model": model})
         return cast(RunnableSerializable[Any, Any], llm)
 
@@ -108,38 +104,37 @@ class LLMService:
             context = context[: MAX_INPUT_CHARS // 2] + " …[context truncated]"
         return context
 
-    @cache(ttl=86400)
+    # =========================
+    #       SUMMARIZATION
+    # =========================
+
+    # Cache disabled - always generate fresh summaries
     async def _summarize_cached(
         self, text: str, context: str, truncated: bool, user_request: str
     ) -> SummaryNote:
+        """
+        NOTE: Q&A seeds have been removed by design. We focus on TL;DR + structured sections only.
+        """
         parser = PydanticOutputParser(pydantic_object=SummaryNote)
         format_instructions = parser.get_format_instructions()
         system_prompt = """You are an academic study assistant that answers user requests about the supplied material.
-Your job is to help with ANY study-relevant request such as:
-- extracting key URLs (e.g., course page, handbook entry, assessment links),
-- summarising course content and learning outcomes,
-- generating clear, structured notes,
-- answering factual questions about prerequisites, delivery mode, key dates, and assessments,
-- surfacing actionable advice for students based only on the supplied content.
+
+Your job is to help with study-relevant tasks such as:
+- summarising course or document content,
+- producing clean, structured notes with headings and concise bullets,
+- answering factual questions about prerequisites, delivery mode, key dates, and assessments (based ONLY on supplied content),
+- extracting important links that appear in the text.
 
 STRICTLY follow these principles:
 1) Grounding: Use ONLY the supplied material (PRIMARY MATERIAL + ADDITIONAL CONTEXT). If something is missing or unclear, state "not found in provided material."
-2) No code: Do NOT write source code, scripts, shell commands, or pseudo-code.
+2) No code: Do NOT write source code, shell commands, or pseudo-code.
 3) Honesty about limits: If input is truncated or context is missing, explicitly note it in the output.
 4) Formatting: Output must be valid JSON that matches the provided schema exactly. Use the format instructions: {format_instructions}. If a field has no evidence, leave it empty as allowed by the schema.
 
 Task selection:
-- If the user_request is specific, perform that task precisely.
-- If the user_request is "auto" or empty, provide: (a) a concise TL;DR, (b) structured notes with concrete facts (topics, outcomes, delivery, assessment, dates), and (c) helpful study Q&A seeds - all grounded in the material.
-
-Content selection guidance:
-- Ignore navigation chrome, cookie banners, ads, and boilerplate.
-- Prefer academically relevant details: unit descriptions, outcomes, topics, delivery modes, prerequisites, assessments with weightings and deadlines, key dates, staff/contact, and study tips derived from the material.
-- When URLs are present, extract the most canonical or official ones and place them in the most appropriate output fields.
-
-Conciseness: Be concise but prioritise clarity and factual density over strict word limits.
-
-Remember: produce JSON only, conforming to the schema given by the format instructions."""
+- If user_request is specific, perform ONLY that task.
+- If user_request is "auto" or empty, produce: (a) a concise TL;DR and (b) well-structured sections surfacing concrete facts (topics, outcomes, delivery, assessments, dates, contacts).
+"""
         human_prompt = """USER REQUEST:
 {user_request}
 
@@ -188,6 +183,12 @@ Input state: {truncated_notice}"""
                     truncated_text, context, truncated, user_request=user_request
                 )
                 summary = self._enforce_summary_limits(summary, truncated)
+                # Ensure qna_seeds is empty to remove Q&A from outputs, even if schema contains the field.
+                if hasattr(summary, "qna_seeds"):
+                    try:
+                        summary.qna_seeds = []
+                    except Exception:
+                        pass
                 return LLMResult(summary, fallback_used=False)
             except Exception as exc:  # noqa: BLE001
                 logger.warning("LLM summarization failed: %s", exc)
@@ -196,7 +197,11 @@ Input state: {truncated_notice}"""
             fallback.tldr = fallback.tldr[:150] + " (source truncated)"
         return LLMResult(fallback, fallback_used=True)
 
-    @cache(ttl=86400)
+    # =========================
+    #       QUIZ (original behavior)
+    # =========================
+
+    # Cache disabled - always generate fresh quizzes
     async def _quiz_cached(self, text: str, context: str, truncated: bool) -> List[QuizItem]:
         parser = PydanticOutputParser(pydantic_object=QuizBatch)
         prompt = ChatPromptTemplate.from_messages(
@@ -258,12 +263,16 @@ Input state: {truncated_notice}"""
                 logger.warning("LLM quiz generation failed: %s", exc)
         return LLMResult(self._fallback_quiz(text), fallback_used=True)
 
+    # =========================
+    #       EMAIL ANALYSIS
+    # =========================
+
     async def summarize_email(self, subject: str, sender: str, body: str) -> LLMResult:
         trimmed_body, _ = self._truncate(body)
         if self.has_llm:
             parser = PydanticOutputParser(pydantic_object=EmailAnalysis)
             format_instructions = parser.get_format_instructions()
-            
+
             prompt = ChatPromptTemplate.from_messages(
                 [
                     (
@@ -289,7 +298,7 @@ Input state: {truncated_notice}"""
                     ),
                 ]
             ).partial(format_instructions=format_instructions)
-            
+
             try:
                 llm = self._llm
                 if llm is None:
@@ -299,7 +308,7 @@ Input state: {truncated_notice}"""
                 return LLMResult(cast(EmailAnalysis, analysis), fallback_used=False)
             except Exception as exc:  # noqa: BLE001
                 logger.warning("LLM email analysis failed: %s", exc)
-        
+
         # Fallback
         fallback_summary = self._fallback_email_summary(trimmed_body)
         fallback_analysis = EmailAnalysis(
@@ -309,82 +318,80 @@ Input state: {truncated_notice}"""
         )
         return LLMResult(fallback_analysis, fallback_used=True)
 
-    @cache(ttl=43200)
-    async def _todo_cached(self, text: str) -> List[TodoDraft]:
-        parser = PydanticOutputParser(pydantic_object=TodoBatch)
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                (
-                    "system",
-                    "Extract actionable tasks. Titles must start with a verb, be concise, and suitable for a to-do list."
-                    " Include due_at as ISO8601 when unambiguous or omit it. Avoid logging or echoing sensitive data.",
-                ),
-                ("human", "SOURCE:\n{text}"),
-            ]
-        )
-        llm = self._llm
-        if llm is None:
-            raise RuntimeError("LLM not initialised")
-        chain: RunnableSerializable[Any, Any] = prompt | llm | parser
-        batch = await chain.ainvoke({"text": text})
-        todo_batch = cast(TodoBatch, batch)
-        return list(todo_batch.items)
+    async def generate_email_digest_simple(self, combined_email_text: str) -> LLMResult:
+        """Generate a comprehensive digest summary from multiple email summaries with tasks & deadlines."""
+        if self._llm is not None:
+            from langchain_core.prompts import ChatPromptTemplate
+            from langchain_core.output_parsers import JsonOutputParser
+            from pydantic import BaseModel, Field
 
-    def _normalise_todos(self, drafts: List[TodoDraft]) -> List[TodoDraft]:
-        normalised: List[TodoDraft] = []
-        try:
-            tz = ZoneInfo(self.settings.default_timezone)
-        except Exception:  # pragma: no cover - fallback when tz unavailable
-            tz = ZoneInfo("UTC")
-        seen_titles: set[str] = set()
-        for draft in drafts:
-            title = draft.title.strip()
-            if not title:
-                continue
-            lower_title = title.lower()
-            if lower_title in seen_titles:
-                continue
-            seen_titles.add(lower_title)
-            due_at = draft.due_at
-            confidence = draft.due_at_confidence
-            parsed_dt = None
-            if isinstance(due_at, str):
-                parsed_dt = dateparser.parse(
-                    due_at,
-                    settings={
-                        "RETURN_AS_TIMEZONE_AWARE": True,
-                        "PREFER_DATES_FROM": "future",
-                        "TIMEZONE": self.settings.default_timezone,
-                    },
+            class DigestSummary(BaseModel):
+                overview: str = Field(description="2-3 sentence overview of the main themes across emails")
+                highlights: list[str] = Field(
+                    default_factory=list,
+                    description="4-6 key highlights capturing the most important information",
                 )
-            elif due_at is not None:
-                parsed_dt = due_at
-            if parsed_dt is None:
-                normalised.append(
-                    TodoDraft(title=title, due_at=None, due_at_confidence=confidence or "low")
+                action_items: list[str] = Field(
+                    default_factory=list,
+                    description="3-5 actionable next steps that require attention",
                 )
-            else:
-                if parsed_dt.tzinfo is None:
-                    parsed_dt = parsed_dt.replace(tzinfo=tz)
-                    confidence = confidence or "low"
-                else:
-                    confidence = confidence or "high"
-                normalised.append(
-                    TodoDraft(title=title, due_at=parsed_dt, due_at_confidence=confidence)
+                tasks_and_deadlines: list[str] = Field(
+                    default_factory=list,
+                    description="3-7 tasks with due dates when available (format: 'Task description (Due: YYYY-MM-DD)')",
                 )
-        return normalised
 
-    async def extract_todos(self, text: str) -> LLMResult:
-        truncated_text, _ = self._truncate(text)
-        if self.has_llm:
+            parser = JsonOutputParser(pydantic_object=DigestSummary)
+
+            prompt = ChatPromptTemplate.from_messages(
+                [
+                    (
+                        "system",
+                        "You are analyzing a batch of email summaries to create a comprehensive digest.\n"
+                        "Your task:\n"
+                        "1. Write a brief overview paragraph (2-3 sentences) summarizing the main themes.\n"
+                        "2. Extract 4-6 key highlights across all emails (most important information).\n"
+                        "3. List 3-5 action items that require attention.\n"
+                        "4. List 3-7 tasks with deadlines (format: 'Task description (Due: YYYY-MM-DD)' or just 'Task description' if no date).\n\n"
+                        "{format_instructions}\n\n"
+                        "Return only valid JSON matching the schema."
+                    ),
+                    (
+                        "human",
+                        "Email Summaries:\n\n{email_summaries}"
+                    ),
+                ]
+            ).partial(format_instructions=parser.get_format_instructions())
+
             try:
-                drafts = await self._todo_cached(truncated_text)
-                normalised = self._normalise_todos(drafts)
-                if normalised:
-                    return LLMResult(normalised, fallback_used=False)
-            except Exception as exc:  # noqa: BLE001
-                logger.warning("LLM todo extraction failed: %s", exc)
-        return LLMResult(self._fallback_todos(text), fallback_used=True)
+                llm = self._llm
+                chain = prompt | llm | parser
+                digest_summary = await chain.ainvoke({"email_summaries": combined_email_text})
+
+                if isinstance(digest_summary, DigestSummary):
+                    digest_data = digest_summary.model_dump()
+                elif isinstance(digest_summary, dict):
+                    digest_data = digest_summary
+                else:
+                    digest_data = DigestSummary.model_validate(digest_summary).model_dump()
+
+                return LLMResult(digest_data, fallback_used=False)
+
+            except Exception as exc:
+                logger.warning("LLM email digest generation failed: %s", exc)
+        
+        # Fallback
+        fallback_digest = {
+            "overview": "Summary of recent emails (LLM unavailable)",
+            "highlights": ["Email digest requires AI to be enabled"],
+            "action_items": ["Configure OpenAI API key to generate intelligent digests"],
+            "tasks_and_deadlines": ["Review emails for important deadlines"]
+        }
+        return LLMResult(fallback_digest, fallback_used=True)
+
+
+    # =========================
+    #        FALLBACKS
+    # =========================
 
     def _fallback_email_summary(self, body: str) -> str:
         first_line = body.strip().split(".")[0]
@@ -394,52 +401,35 @@ Input state: {truncated_notice}"""
     def _extract_fallback_key_points(self, subject: str, body: str) -> List[str]:
         """Extract simple key points from email when LLM is unavailable."""
         points = []
-        
-        # Try to extract sentences from body
         sentences = [s.strip() for s in body.split(".") if len(s.strip()) > 20]
-        
-        # Add subject as first point if meaningful
         if len(subject) > 10:
             points.append(f"Subject: {subject[:80]}")
-        
-        # Add first few sentences as points
         for sentence in sentences[:3]:
             if len(sentence) > 15:
                 points.append(sentence[:100])
-        
         return points[:4]  # Max 4 points
 
     def _categorize_email_fallback(self, subject: str, sender: str) -> str:
         """Categorize email based on keywords when LLM is unavailable."""
         combined = f"{subject} {sender}".lower()
-        
-        # Academic keywords
         if any(word in combined for word in ["assignment", "lecture", "course", "exam", "quiz", "tutorial", "lab", "submission"]):
             return "academic"
-        
-        # Administrative keywords
         if any(word in combined for word in ["enrollment", "enrol", "admin", "register", "fee", "payment", "official", "university"]):
             return "administrative"
-        
-        # Social keywords
         if any(word in combined for word in ["event", "party", "club", "social", "meet", "gathering", "rsvp"]):
             return "social"
-        
-        # Promotional keywords
         if any(word in combined for word in ["sale", "offer", "discount", "deal", "promo", "buy", "shop", "limited time"]):
             return "promotional"
-        
-        # Notification keywords
         if any(word in combined for word in ["notification", "alert", "reminder", "update", "confirm"]):
             return "notification"
-        
-        # Newsletter keywords
         if any(word in combined for word in ["newsletter", "digest", "bulletin", "weekly", "monthly"]):
             return "newsletter"
-        
         return "other"
 
     def _fallback_summary(self, text: str) -> SummaryNote:
+        """
+        Fallback summary with NO Q&A seeds.
+        """
         sentences = [s.strip() for s in text.replace("\n", " ").split(".") if s.strip()]
         tldr = " ".join(sentences[:2]) if len(sentences) >= 2 else (sentences[0] if sentences else text[:160])
         core_points = sentences[:3] or [tldr]
@@ -450,12 +440,12 @@ Input state: {truncated_notice}"""
             SummarySection(heading="Supporting Details", bullets=supporting[:3]),
             SummarySection(heading="Implications & Next Steps", bullets=implications[:3]),
         ]
-        qna = [
-            SummaryQnASeed(q="What is the central argument?", a_hint=core_points[0][:120]),
-            SummaryQnASeed(q="Which evidence backs the main idea?", a_hint=supporting[0][:120]),
-            SummaryQnASeed(q="What should be done next?", a_hint=implications[0][:120]),
-        ]
-        return SummaryNote(tldr=tldr[:200], sections=sections, qna_seeds=qna)
+        # Ensure qna_seeds is empty/absent depending on schema. If SummaryNote requires the field, set to [].
+        try:
+            return SummaryNote(tldr=tldr[:200], sections=sections, qna_seeds=[])
+        except TypeError:
+            # If schema doesn't accept qna_seeds anymore
+            return SummaryNote(tldr=tldr[:200], sections=sections)
 
     def _fallback_quiz(self, text: str) -> list[QuizItem]:
         template_pool = [
@@ -483,33 +473,45 @@ Input state: {truncated_notice}"""
                 rationale="The notes mention managing limited resources as a core issue.",
                 generated_from="template",
             ),
+            QuizItem(
+                stem="What is the central concept covered in this material?",
+                options=[
+                    "An overview of the main ideas",
+                    "A list of unrelated facts",
+                    "A biography of contributors",
+                    "A set of random definitions",
+                ],
+                answer_index=0,
+                rationale="The material emphasizes the main concepts, making option A the best choice.",
+                generated_from="template",
+            ),
+            QuizItem(
+                stem="Which aspect is most emphasized in the content?",
+                options=[
+                    "Practical applications",
+                    "Historical background only",
+                    "Future predictions",
+                    "Irrelevant tangents",
+                ],
+                answer_index=0,
+                rationale="The content focuses on practical applications and real-world use cases.",
+                generated_from="template",
+            ),
+            QuizItem(
+                stem="What conclusion can be drawn from the material?",
+                options=[
+                    "The topic requires further study and practice",
+                    "Everything is fully understood",
+                    "No action is needed",
+                    "The subject is completely irrelevant",
+                ],
+                answer_index=0,
+                rationale="The material suggests continued learning and application of concepts.",
+                generated_from="template",
+            ),
         ]
-        items: list[QuizItem] = []
-        sentences = [s.strip() for s in text.split(".") if s.strip()]
-        for sentence in sentences[:3]:
-            options = [sentence, f"Not {sentence}", "Related concept", "Background detail"]
-            items.append(
-                QuizItem(
-                    stem=f"Which statement aligns with: {sentence[:70]}?",
-                    options=options,
-                    answer_index=0,
-                    rationale="This option restates the main sentence, aligning with the source notes.",
-                    generated_from="template",
-                )
-            )
-        items.extend(template_pool)
-        return items[:5]
-
-    def _fallback_todos(self, text: str) -> list[TodoDraft]:
-        drafts: list[TodoDraft] = []
-        lines = [line.strip("- ") for line in text.splitlines() if line.strip()]
-        if not lines:
-            drafts.append(TodoDraft(title="Review notes", due_at=None, due_at_confidence="low"))
-            return drafts
-        for line in lines:
-            drafts.append(TodoDraft(title=line, due_at=None, due_at_confidence="low"))
-        return drafts
+        # Return 5 varied template questions instead of sentence-based ones
+        return template_pool[:5]
 
 
 __all__ = ["LLMService", "LLMResult", "EmailAnalysis"]
-

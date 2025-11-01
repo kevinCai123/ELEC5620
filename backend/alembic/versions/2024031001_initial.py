@@ -33,6 +33,7 @@ def upgrade() -> None:
         sa.Column("title", sa.String(length=255), nullable=False),
         sa.Column("due_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("uid", sa.String(length=255), nullable=False),
+        sa.Column("sequence", sa.Integer(), nullable=False, server_default=sa.text("0")),
         sa.UniqueConstraint("plan_id", "uid", name="uq_plan_item_uid"),
     )
     op.create_table(
