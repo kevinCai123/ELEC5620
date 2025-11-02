@@ -101,20 +101,20 @@ async def test_google_calendar_upsert_and_cancel(monkeypatch) -> None:
         google_api_user_email="owner@example.com",
         google_calendar_id="primary",
     )
-    client = gc_module.GoogleCalendarClient(settings)
+    client = gc_module.GoogleCalendarClient(settings)  # type: ignore[arg-type]
 
     plan_item = _make_plan_item()
     plan = SimpleNamespace(title="Study Session", items=[plan_item])
     tz = ZoneInfo("Australia/Sydney")
 
     # First call inserts; second call triggers update path for same event id
-    client.upsert_plan_events(plan, event_tz=tz, attendee_email="attendee@example.com")
-    client.upsert_plan_events(plan, event_tz=tz, attendee_email="attendee@example.com")
+    client.upsert_plan_events(plan, event_tz=tz, attendee_email="attendee@example.com")  # type: ignore[arg-type]
+    client.upsert_plan_events(plan, event_tz=tz, attendee_email="attendee@example.com")  # type: ignore[arg-type]
 
     assert dummy_service.insert_calls, "Expected at least one insert call"
     assert dummy_service.update_calls, "Expected update call when event already exists"
 
     # Cancel once (success) then again to exercise 404 path
-    client.cancel_plan_events(plan, items_to_cancel=plan.items, calendar_id="primary", send_updates="none")
-    client.cancel_plan_events(plan, items_to_cancel=plan.items, calendar_id="primary", send_updates="none")
+    client.cancel_plan_events(plan, items_to_cancel=plan.items, calendar_id="primary", send_updates="none")  # type: ignore[arg-type]
+    client.cancel_plan_events(plan, items_to_cancel=plan.items, calendar_id="primary", send_updates="none")  # type: ignore[arg-type]
     assert dummy_service.delete_calls, "Expected delete call for cancelled event"

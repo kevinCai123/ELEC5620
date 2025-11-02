@@ -179,13 +179,16 @@ class DigestService:
         overview_items = [overview_text] if overview_text else ["Summary unavailable."]
 
         priority_actions_source: list[str] = []
-        priority_actions_source.extend(digest_data.get("action_items", []))  # type: ignore[assignment]
+        action_items = digest_data.get("action_items", [])
+        if isinstance(action_items, list):
+            priority_actions_source.extend(action_items)  # type: ignore[arg-type]
         priority_actions_source.extend(todo_suggestions)
         priority_actions = clamp_uniq(priority_actions_source, 5)
         if not priority_actions:
             priority_actions = ["No immediate action items identified."]
 
-        deadlines_source: list[str] = digest_data.get("tasks_and_deadlines", [])  # type: ignore[arg-type]
+        deadlines_source_raw = digest_data.get("tasks_and_deadlines", [])
+        deadlines_source: list[str] = deadlines_source_raw if isinstance(deadlines_source_raw, list) else []  # type: ignore[assignment]
         deadlines_items = self._build_deadline_items(deadlines_source, emails)
         if not deadlines_items:
             deadlines_items = ["No specific deadlines detected. Review highlighted emails for next steps."]
@@ -380,7 +383,7 @@ class DigestService:
             text = str(raw).strip()
             if not text or text.lower() in seen:
                 continue
-            parsed = dateparser.parse(text, settings=settings)
+            parsed = dateparser.parse(text, settings=settings)  # type: ignore[arg-type]
             if parsed:
                 deadlines.append((parsed, text))
                 seen.add(text.lower())
@@ -413,7 +416,7 @@ class DigestService:
             if email.summary:
                 snippets.append(email.summary)
             for snippet in snippets:
-                parsed = dateparser.parse(snippet, settings=settings)
+                parsed = dateparser.parse(snippet, settings=settings)  # type: ignore[arg-type]
                 if parsed and any(
                     keyword in snippet.lower()
                     for keyword in ("due", "deadline", "expires", "register", "submit", "event")
@@ -477,7 +480,9 @@ class DigestService:
             count = len(group)
             highlights: list[str] = []
             for idx in group:
-                highlights.extend(items[idx]["key_points"][:1])
+                key_points = items[idx]["key_points"][:1]
+                if key_points:
+                    highlights.extend(key_points)
                 if items[idx]["summary"]:
                     highlights.append(items[idx]["summary"][:120])
             highlight_text = clamp_uniq(highlights, 2)

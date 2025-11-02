@@ -83,7 +83,7 @@ class QuizService:
         )
 
         # High creativity settings for maximum variety
-        llm = self._llm._llm.bind(temperature=0.8, top_p=0.95)  # type: ignore[attr-defined]
+        llm = self._llm._llm.bind(temperature=0.8, top_p=0.95)  # type: ignore[attr-defined,union-attr]
         chain = prompt | llm | parser
         batch = await chain.ainvoke({"notes": notes, "format_instructions": format_instructions})
         return list(batch.items)

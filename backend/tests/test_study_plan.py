@@ -39,7 +39,7 @@ def test_build_plan_calendar_contains_required_fields() -> None:
     plan_item = _sample_plan_item()
     plan = SimpleNamespace(title="Plan: testing", items=[plan_item])
     calendar_text = _build_plan_calendar(
-        plan,
+        plan,  # type: ignore[arg-type]
         organizer_email="organizer@example.com",
         recipient_email="attendee@example.com",
         event_tz=ZoneInfo("Australia/Sydney"),
@@ -68,7 +68,7 @@ def test_build_plan_update_calendar_increments_sequence() -> None:
     plan_item = _sample_plan_item(sequence=2)
     plan = SimpleNamespace(title="Plan Update", items=[plan_item])
     calendar_text = build_plan_update_calendar(
-        plan,
+        plan,  # type: ignore[arg-type]
         updated_items=[plan_item],
         organizer_email="organizer@example.com",
         recipient_email="attendee@example.com",
@@ -86,7 +86,7 @@ def test_build_plan_cancel_calendar_marks_cancelled() -> None:
     plan_item = _sample_plan_item(sequence=1)
     plan = SimpleNamespace(title="Plan Cancel", items=[plan_item])
     calendar_text = build_plan_cancel_calendar(
-        plan,
+        plan,  # type: ignore[arg-type]
         items_to_cancel=[plan_item],
         organizer_email="organizer@example.com",
         recipient_email="attendee@example.com",

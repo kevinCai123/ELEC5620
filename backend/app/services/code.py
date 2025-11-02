@@ -65,7 +65,7 @@ Return your response in this format:
             ("human", "{prompt}")
         ])
 
-        llm = self._llm._llm.bind(temperature=0.3)  # type: ignore[attr-defined]
+        llm = self._llm._llm.bind(temperature=0.3)  # type: ignore[attr-defined,union-attr]
         chain = prompt_template | llm | parser
         
         result = await chain.ainvoke({
@@ -346,7 +346,7 @@ Execution Result:
             ("human", "{execution_details}")
         ])
 
-        llm = self._llm._llm.bind(temperature=0.3)  # type: ignore[attr-defined]
+        llm = self._llm._llm.bind(temperature=0.3)  # type: ignore[attr-defined,union-attr]
         chain = prompt_template | llm | parser
         
         result = await chain.ainvoke({
@@ -354,7 +354,7 @@ Execution Result:
             "format_instructions": format_instructions
         })
         
-        return result  # type: ignore[return-value]
+        return result  # type: ignore[return-value,no-any-return]
 
     def _fallback_pre_analysis(self) -> CodeAnalysis:
         """Fallback pre-analysis when LLM is unavailable"""

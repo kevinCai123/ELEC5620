@@ -75,7 +75,7 @@ async def test_gmail_client_send_email_with_calendar(monkeypatch) -> None:
         google_refresh_token="refresh",
         google_api_user_email="sender@example.com",
     )
-    client = gmail_module.GmailClient(settings)
+    client = gmail_module.GmailClient(settings)  # type: ignore[arg-type]
 
     client.send_email(
         subject="Plan Ready",
