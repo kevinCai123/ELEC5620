@@ -4,14 +4,13 @@ import asyncio
 import logging
 import subprocess
 import time
-from typing import Any
 
 from pydantic import BaseModel, Field
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
 from app.schemas.code import CodeAnalysis, OutputAnalysis
-from app.services.llm import LLMService, LLMResult
+from app.services.llm import LLMService
 from app.utils.metrics import emit_metric, time_metric
 
 logger = logging.getLogger(__name__)

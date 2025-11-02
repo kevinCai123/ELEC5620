@@ -1,11 +1,11 @@
 """Comprehensive tests for app/services/code.py - code generation and execution service."""
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock, patch
 import pytest
 
 from app.schemas.code import CodeAnalysis, OutputAnalysis
-from app.services.code import CodeService, GeneratedCode
+from app.services.code import CodeService
 
 
 @pytest.fixture

@@ -4,6 +4,7 @@ import json
 from collections import Counter
 from datetime import date, datetime
 import re
+import smtplib
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -283,7 +284,6 @@ class DigestService:
                 if not all([_SETTINGS.smtp_host, _SETTINGS.smtp_user, _SETTINGS.smtp_pass]):
                     return False, f"Email sending failed: {str(gmail_err)}. SMTP not configured as fallback."
                 
-                import smtplib
                 from email.message import EmailMessage
                 
                 message = EmailMessage()

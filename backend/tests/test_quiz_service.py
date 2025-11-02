@@ -3,7 +3,6 @@ from __future__ import annotations
 import pytest
 
 from app.schemas.quiz import QuizItem
-from app.services.llm import LLMResult
 from app.services.quiz import QuizService
 
 

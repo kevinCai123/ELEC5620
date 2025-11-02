@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 import tempfile
 import pytest
 
-from app.services.rag import DEFAULT_INDEX_PATH, _embeddings, get_retriever, ingest_folder
+from app.services.rag import _embeddings, get_retriever, ingest_folder
 
 
 def test_embeddings_uses_openai_when_available():

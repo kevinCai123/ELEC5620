@@ -1,9 +1,7 @@
 """Additional comprehensive tests for app/services/quiz.py - quiz generation service."""
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
 
 from app.schemas.quiz import QuizItem
 from app.services.quiz import QuizService

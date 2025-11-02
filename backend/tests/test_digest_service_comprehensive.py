@@ -1,7 +1,7 @@
 """Comprehensive tests for app/services/digest.py - digest service."""
 from __future__ import annotations
 
-from datetime import datetime, date, timezone
+from datetime import datetime, date
 from unittest.mock import AsyncMock, MagicMock, patch
 from zoneinfo import ZoneInfo
 
@@ -264,7 +264,7 @@ async def test_generate_and_store_digest_logs_failure(digest_service):
         assert log_arg.channel == "failed"
 
 
-def test_build_topic_cards_groups_similar_emails(digest_service):
+def test_identify_threads_requiring_reply(digest_service):
     """Test _identify_threads_requiring_reply finds pending emails."""
     emails = [
         EmailSummary(id="1", subject="Quick question?", sender="colleague@work.com", summary="Needs response", category="work", key_points=[], date="2025-01-01"),
