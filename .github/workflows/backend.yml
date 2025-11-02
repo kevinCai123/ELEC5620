@@ -57,13 +57,22 @@ jobs:
       - name: Type-check with mypy
         run: poetry run mypy app tests
 
-      - name: Run tests
+      - name: Run tests with coverage
         env:
           PYTHONPATH: backend
           DATABASE_URL: sqlite+aiosqlite:///:memory:
           OPENAI_API_KEY: test-key
           OPENWEATHER_API_KEY: test-key
-        run: poetry run pytest
+        run: |
+          poetry run pytest --cov=app --cov-report=term --cov-report=xml --cov-fail-under=73
+      
+      - name: Upload coverage to Codecov (optional)
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./backend/coverage.xml
+          flags: backend
+          fail_ci_if_error: false
 
       - name: Build wheel
         run: poetry build

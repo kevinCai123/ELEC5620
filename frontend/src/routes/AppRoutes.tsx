@@ -14,28 +14,18 @@ import { QuizPage } from '../features/quiz/QuizPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { SummarizePage } from '../features/summarize/SummarizePage';
 import { TravelPage } from '../features/travel/TravelPage';
-import { useAuth } from '../hooks/useAuth';
-
-function RootRedirect() {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-foreground/20 border-t-foreground" />
-      </div>
-    );
-  }
-
-  return <Navigate to={isAuthenticated ? '/dashboard' : '/login'} replace />;
-}
 
 export function AppRoutes() {
   return (
     <Routes>
+      {/* Root redirects to login */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      
+      {/* Login page */}
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-        <Route index element={<RootRedirect />} />
+      
+      {/* Protected routes */}
+      <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="emails" element={<EmailsPage />} />
         <Route path="plan" element={<PlanPage />} />

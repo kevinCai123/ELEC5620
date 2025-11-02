@@ -8,7 +8,6 @@ import {
   Eye,
   Gauge,
   MapPin,
-  Sun,
   Sunrise,
   Sunset,
   Thermometer,
@@ -73,16 +72,8 @@ function pctOrFraction(x?: number): number {
 function kmh(mps?: number): number | undefined {
   return mps == null ? undefined : Math.round(mps * 3.6);
 }
-function severityLabel(uv?: number) {
-  if (uv == null) return '—';
-  if (uv >= 11) return 'Extreme';
-  if (uv >= 8) return 'Very High';
-  if (uv >= 6) return 'High';
-  if (uv >= 3) return 'Moderate';
-  return 'Low';
-}
 function aqiBand(aqi?: number) {
-  if (aqi == null) return { label: '—', cls: '' };
+  if (aqi == null) return { label: 'â€”', cls: '' };
   if (aqi <= 50) return { label: 'Good', cls: 'text-emerald-400' };
   if (aqi <= 100) return { label: 'Moderate', cls: 'text-yellow-400' };
   if (aqi <= 150) return { label: 'Unhealthy (SG)', cls: 'text-orange-400' };
@@ -103,9 +94,8 @@ function derivedBringItems(weather?: WeatherInfo): string[] {
   // Wind
   if ((weather.wind_speed ?? 0) >= 8 || (weather.wind_gust ?? 0) >= 12) tips.push('Windbreaker / light jacket');
 
-  // Heat & sun
+  // Heat
   if (t >= 28) tips.push('Light, breathable clothing');
-  if ((weather.uv_index ?? 0) >= 6) tips.push('Sunscreen (SPF 50+), sunglasses, hat');
 
   // Cool/cold
   if (t <= 10) tips.push('Warm jacket; consider gloves');
@@ -164,7 +154,7 @@ export function TravelPage() {
             Weather-aware travel timing
           </CardTitle>
           <CardDescription>
-            Enter your destination and event time to get a leave recommendation, packing tips, and a walking route—with fallbacks if live data is unavailable.
+            Enter your destination and event time to get a leave recommendation, packing tips, and a walking route â€” with fallbacks if live data is unavailable.
           </CardDescription>
         </CardHeader>
         <CardContent className="min-w-0">
@@ -292,15 +282,11 @@ export function TravelPage() {
                     <div className="flex flex-wrap items-center gap-4">
                       <Thermometer className="h-5 w-5" />
                       <span className="text-lg font-semibold text-foreground">
-                        {Math.round(advice.weather.temp_c)}°C
+                        {Math.round(advice.weather.temp_c)}Â°C
                       </span>
                       {advice.weather.feels_like_c != null && (
-                        <span className="text-foreground/70">Feels {Math.round(advice.weather.feels_like_c)}°C</span>
+                        <span className="text-foreground/70">Feels {Math.round(advice.weather.feels_like_c)}Â°C</span>
                       )}
-                      <span className="ml-auto inline-flex items-center gap-2 text-foreground/70">
-                        <Sun className="h-4 w-4" />
-                        UV {advice.weather.uv_index ?? '—'} ({severityLabel(advice.weather.uv_index)})
-                      </span>
                     </div>
                     {advice.weather.condition_text && (
                       <div className="mt-2 flex items-center gap-2 text-sm text-foreground/70">
@@ -341,7 +327,7 @@ export function TravelPage() {
                       Wind
                     </div>
                     <div className="space-y-1 text-sm text-foreground/70">
-                      <div>Speed: <span className="font-semibold text-foreground">{kmh(advice.weather.wind_speed) ?? '—'} km/h</span></div>
+                      <div>Speed: <span className="font-semibold text-foreground">{kmh(advice.weather.wind_speed) ?? 'â€”'} km/h</span></div>
                       {advice.weather.wind_gust != null && <div>Gust: {kmh(advice.weather.wind_gust)} km/h</div>}
                       {advice.weather.wind_dir && <div>Direction: {advice.weather.wind_dir}</div>}
                     </div>
@@ -356,7 +342,7 @@ export function TravelPage() {
                     <div className="space-y-1 text-sm text-foreground/70">
                       {advice.weather.visibility_km != null && <div>Visibility: {advice.weather.visibility_km.toFixed(1)} km</div>}
                       {advice.weather.humidity != null && <div>Humidity: {advice.weather.humidity}%</div>}
-                      {advice.weather.dew_point_c != null && <div>Dew point: {Math.round(advice.weather.dew_point_c)}°C</div>}
+                      {advice.weather.dew_point_c != null && <div>Dew point: {Math.round(advice.weather.dew_point_c)}Â°C</div>}
                       {advice.weather.pressure_hpa != null && (
                         <div className="inline-flex items-center gap-2">
                           <Gauge className="h-4 w-4" />
@@ -365,7 +351,7 @@ export function TravelPage() {
                       )}
                       {advice.weather.aqi != null && (
                         <div>
-                          AQI: <span className={`font-semibold ${aqiBand(advice.weather.aqi).cls}`}>{advice.weather.aqi} — {aqiBand(advice.weather.aqi).label}</span>
+                          AQI: <span className={`font-semibold ${aqiBand(advice.weather.aqi).cls}`}>{advice.weather.aqi} â€” {aqiBand(advice.weather.aqi).label}</span>
                         </div>
                       )}
                     </div>
@@ -391,7 +377,7 @@ export function TravelPage() {
                         </div>
                       )}
                       {advice.weather.feels_like_c != null && (
-                        <div>Heat index: {Math.round(advice.weather.feels_like_c)}°C</div>
+                        <div>Heat index: {Math.round(advice.weather.feels_like_c)}Â°C</div>
                       )}
                     </div>
                   </div>
