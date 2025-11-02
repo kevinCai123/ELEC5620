@@ -179,7 +179,7 @@ class DigestService:
         overview_items = [overview_text] if overview_text else ["Summary unavailable."]
 
         priority_actions_source: list[str] = []
-        priority_actions_source.extend(digest_data.get("action_items", []))  # type: ignore[arg-type]
+        priority_actions_source.extend(digest_data.get("action_items", []))  # type: ignore[assignment]
         priority_actions_source.extend(todo_suggestions)
         priority_actions = clamp_uniq(priority_actions_source, 5)
         if not priority_actions:
@@ -296,7 +296,7 @@ class DigestService:
                 if _SETTINGS.smtp_use_ssl:
                     smtp_class = smtplib.SMTP_SSL
                 else:
-                    smtp_class = smtplib.SMTP
+                    smtp_class = smtplib.SMTP  # type: ignore[assignment]
                     if _SETTINGS.smtp_use_tls:
                         smtp_kwargs["timeout"] = 10
                 

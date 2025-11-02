@@ -23,7 +23,7 @@ async def test_summary_service_fallback(monkeypatch) -> None:
     service = SummaryService()
     monkeypatch.setattr(summary_module, "emit_metric", lambda *args, **kwargs: None)
     monkeypatch.setattr(service, "_summarize_cached", AsyncMock(side_effect=RuntimeError("boom")))
-    service._llm = SimpleNamespace(_fallback_summary=lambda src: _dummy_summary(src))
+    service._llm = SimpleNamespace(_fallback_summary=lambda src: _dummy_summary(src))  # type: ignore[assignment]
 
     note, fallback_used, truncated = await service.summarize(
         text="<main>  Study content with <strong>HTML</strong>. </main>"

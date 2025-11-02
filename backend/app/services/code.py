@@ -299,7 +299,7 @@ Return your analysis in this format:
             ("human", "Language: {language}\n\nCode:\n```\n{code}\n```")
         ])
 
-        llm = self._llm._llm.bind(temperature=0.2)  # type: ignore[attr-defined]
+        llm = self._llm._llm.bind(temperature=0.2)  # type: ignore[attr-defined,union-attr]
         chain = prompt_template | llm | parser
         
         result = await chain.ainvoke({
@@ -308,7 +308,7 @@ Return your analysis in this format:
             "format_instructions": format_instructions
         })
         
-        return result  # type: ignore[return-value]
+        return result  # type: ignore[no-any-return]  # type: ignore[return-value]
 
     async def _analyze_output(
         self, code: str, language: str, output: str, error: str | None, success: bool
