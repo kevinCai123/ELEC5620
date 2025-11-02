@@ -3,8 +3,8 @@
     "id": "fisher-library",
     "name": "Fisher Library",
     "description": "Main university library with extensive collections and study spaces",
-    "aliases": ["fisher", "main library", "lib"],
-    "tags": ["study", "resources", "books"],
+    "aliases": ["fisher", "main library", "lib", "F03"],
+    "tags": ["study", "resources", "books", "library"],
     "latitude": -33.8886,
     "longitude": 151.1873
   },
@@ -12,7 +12,7 @@
     "id": "quadrangle",
     "name": "Quadrangle Building",
     "description": "Historic sandstone building, iconic USYD landmark",
-    "aliases": ["quad", "main quad", "quadrangle"],
+    "aliases": ["quad", "main quad", "quadrangle", "A14"],
     "tags": ["historic", "landmark", "admin"],
     "latitude": -33.8876,
     "longitude": 151.1873
@@ -30,8 +30,8 @@
     "id": "manning-house",
     "name": "Manning House",
     "description": "Student hub with food, bars, and social spaces",
-    "aliases": ["manning", "manning bar"],
-    "tags": ["food", "social", "bar"],
+    "aliases": ["manning", "manning bar", "K10"],
+    "tags": ["food", "social", "bar", "student"],
     "latitude": -33.8885,
     "longitude": 151.1893
   },
@@ -39,8 +39,8 @@
     "id": "sports-centre",
     "name": "University Sports & Aquatic Centre",
     "description": "Gym, pool, sports facilities, and fitness classes",
-    "aliases": ["usac", "gym", "sports centre", "pool"],
-    "tags": ["fitness", "sports", "pool"],
+    "aliases": ["usac", "gym", "sports centre", "pool", "G09"],
+    "tags": ["fitness", "sports", "pool", "recreation"],
     "latitude": -33.8890,
     "longitude": 151.1845
   },
@@ -88,5 +88,626 @@
     "tags": ["labs", "computers", "technology"],
     "latitude": -33.8883,
     "longitude": 151.1906
+  },
+  {
+    "id": "carslaw",
+    "name": "Carslaw Building",
+    "description": "Mathematics and statistics building with lecture theatres",
+    "aliases": ["carslaw", "F07"],
+    "tags": ["mathematics", "lectures", "study"],
+    "latitude": -33.8883,
+    "longitude": 151.1893
+  },
+  {
+    "id": "macleay",
+    "name": "Macleay Building",
+    "description": "Museum and zoology teaching spaces",
+    "aliases": ["macleay", "museum", "A12"],
+    "tags": ["museum", "science", "historic"],
+    "latitude": -33.8879,
+    "longitude": 151.1876
+  },
+  {
+    "id": "wilkinson",
+    "name": "Wilkinson Building",
+    "description": "Architecture and design studios",
+    "aliases": ["wilkinson", "architecture", "G04"],
+    "tags": ["architecture", "design", "studio"],
+    "latitude": -33.8872,
+    "longitude": 151.1869
+  },
+  {
+    "id": "madsen",
+    "name": "Madsen Building",
+    "description": "Geology and geophysics teaching and research",
+    "aliases": ["madsen", "F09"],
+    "tags": ["geology", "science", "labs"],
+    "latitude": -33.8889,
+    "longitude": 151.1881
+  },
+  {
+    "id": "chemistry",
+    "name": "School of Chemistry",
+    "description": "Chemistry lectures and laboratories",
+    "aliases": ["chemistry", "F11"],
+    "tags": ["chemistry", "science", "labs"],
+    "latitude": -33.8890,
+    "longitude": 151.1895
+  },
+  {
+    "id": "physics",
+    "name": "School of Physics",
+    "description": "Physics teaching and research facilities",
+    "aliases": ["physics", "A28"],
+    "tags": ["physics", "science", "labs"],
+    "latitude": -33.8886,
+    "longitude": 151.1897
+  },
+  {
+    "id": "brennan-maccallum",
+    "name": "Brennan MacCallum Building",
+    "description": "Computer science and IT labs",
+    "aliases": ["brennan", "maccallum", "A18"],
+    "tags": ["computer science", "labs", "technology"],
+    "latitude": -33.8887,
+    "longitude": 151.1890
+  },
+  {
+    "id": "old-teachers-college",
+    "name": "Old Teachers College",
+    "description": "Education faculty and teaching spaces",
+    "aliases": ["otc", "teachers college", "A22"],
+    "tags": ["education", "lectures", "study"],
+    "latitude": -33.8869,
+    "longitude": 151.1877
+  },
+  {
+    "id": "holme-building",
+    "name": "Holme Building",
+    "description": "Agriculture and environment faculty",
+    "aliases": ["holme", "A09"],
+    "tags": ["agriculture", "environment", "lectures"],
+    "latitude": -33.8904,
+    "longitude": 151.1903
+  },
+  {
+    "id": "wentworth",
+    "name": "Wentworth Building",
+    "description": "Student services, childcare, and facilities",
+    "aliases": ["wentworth", "G01"],
+    "tags": ["student services", "childcare", "support"],
+    "latitude": -33.8888,
+    "longitude": 151.1872
+  },
+  {
+    "id": "woolley-building",
+    "name": "John Woolley Building",
+    "description": "Arts faculty and lecture theatres",
+    "aliases": ["woolley", "john woolley", "A20"],
+    "tags": ["arts", "lectures", "study"],
+    "latitude": -33.8873,
+    "longitude": 151.1882
+  },
+  {
+    "id": "macauley",
+    "name": "RC Mills Building",
+    "description": "Lecture theatres and teaching spaces",
+    "aliases": ["rc mills", "mills", "A26"],
+    "tags": ["lectures", "study"],
+    "latitude": -33.8879,
+    "longitude": 151.1881
+  },
+  {
+    "id": "merewether",
+    "name": "Merewether Building",
+    "description": "Economics and commerce teaching",
+    "aliases": ["merewether", "H04"],
+    "tags": ["economics", "commerce", "lectures"],
+    "latitude": -33.8887,
+    "longitude": 151.1907
+  },
+  {
+    "id": "mackie",
+    "name": "Mackie Building",
+    "description": "Pharmacology and medical sciences",
+    "aliases": ["mackie", "K01"],
+    "tags": ["pharmacy", "medical", "science"],
+    "latitude": -33.8899,
+    "longitude": 151.1853
+  },
+  {
+    "id": "eastern-avenue-auditorium",
+    "name": "Eastern Avenue Auditorium",
+    "description": "Large lecture theatre and event space",
+    "aliases": ["eaa", "auditorium"],
+    "tags": ["lectures", "events", "auditorium"],
+    "latitude": -33.8880,
+    "longitude": 151.1900
+  },
+  {
+    "id": "nicholson-museum",
+    "name": "Chau Chak Wing Museum",
+    "description": "University museum with art and antiquities",
+    "aliases": ["museum", "chau chak wing", "ccw"],
+    "tags": ["museum", "art", "culture"],
+    "latitude": -33.8872,
+    "longitude": 151.1888
+  },
+  {
+    "id": "victoria-park-pool",
+    "name": "Victoria Park Pool",
+    "description": "Outdoor swimming pool and recreation area",
+    "aliases": ["vp pool", "victoria park"],
+    "tags": ["pool", "recreation", "sports"],
+    "latitude": -33.8922,
+    "longitude": 151.1869
+  },
+  {
+    "id": "heydon-laurence",
+    "name": "Heydon Laurence Building",
+    "description": "Student accommodation and residential facilities",
+    "aliases": ["heydon laurence", "accommodation"],
+    "tags": ["accommodation", "residential", "housing"],
+    "latitude": -33.8913,
+    "longitude": 151.1840
+  },
+  {
+    "id": "darlington-centre",
+    "name": "Darlington Centre",
+    "description": "Student housing and community spaces",
+    "aliases": ["darlington"],
+    "tags": ["accommodation", "residential", "student"],
+    "latitude": -33.8898,
+    "longitude": 151.1923
+  },
+  {
+    "id": "jane-foss-russell",
+    "name": "Jane Foss Russell Building",
+    "description": "Childcare, theatre, and music facilities",
+    "aliases": ["jfr", "G02"],
+    "tags": ["childcare", "theatre", "music"],
+    "latitude": -33.8881,
+    "longitude": 151.1880
+  },
+  {
+    "id": "seymour-centre",
+    "name": "Seymour Centre",
+    "description": "Performing arts theatre and venue",
+    "aliases": ["seymour", "theatre"],
+    "tags": ["theatre", "performing arts", "events"],
+    "latitude": -33.8878,
+    "longitude": 151.1866
+  },
+  {
+    "id": "pharmacy-building",
+    "name": "Pharmacy Building",
+    "description": "Faculty of Pharmacy building",
+    "aliases": ["pharmacy", "A15"],
+    "tags": ["pharmacy", "health", "lectures"],
+    "latitude": -33.8889,
+    "longitude": 151.1874
+  },
+  {
+    "id": "margaret-telfer",
+    "name": "Margaret Telfer Building",
+    "description": "IT services and computer labs",
+    "aliases": ["telfer", "K07"],
+    "tags": ["computers", "IT", "labs"],
+    "latitude": -33.8892,
+    "longitude": 151.1887
+  },
+  {
+    "id": "wallace-theatre",
+    "name": "Wallace Theatre",
+    "description": "Large lecture theatre",
+    "aliases": ["wallace"],
+    "tags": ["lectures", "theatre"],
+    "latitude": -33.8883,
+    "longitude": 151.1878
+  },
+  {
+    "id": "education-building",
+    "name": "Education Building",
+    "description": "Sydney School of Education and Social Work",
+    "aliases": ["education", "A35"],
+    "tags": ["education", "social work", "lectures"],
+    "latitude": -33.8881,
+    "longitude": 151.1882
+  },
+  {
+    "id": "rose-street",
+    "name": "Rose Street Building",
+    "description": "Performing arts and music facilities",
+    "aliases": ["rose street", "J06"],
+    "tags": ["music", "performing arts", "practice"],
+    "latitude": -33.8866,
+    "longitude": 151.1893
+  },
+  {
+    "id": "sydney-nanoscience",
+    "name": "Sydney Nanoscience Hub",
+    "description": "Advanced research and nanoscience facilities",
+    "aliases": ["nanoscience", "nano hub"],
+    "tags": ["research", "science", "labs"],
+    "latitude": -33.8879,
+    "longitude": 151.1903
+  },
+  {
+    "id": "charles-perkins-centre",
+    "name": "Charles Perkins Centre",
+    "description": "Health and medical research hub",
+    "aliases": ["cpc", "perkins", "D17"],
+    "tags": ["research", "health", "medical"],
+    "latitude": -33.8883,
+    "longitude": 151.1917
+  },
+  {
+    "id": "peter-nicol-russell",
+    "name": "Peter Nicol Russell Building",
+    "description": "Engineering teaching and labs",
+    "aliases": ["pnr", "J02"],
+    "tags": ["engineering", "labs", "lectures"],
+    "latitude": -33.8891,
+    "longitude": 151.1897
+  },
+  {
+    "id": "civil-engineering",
+    "name": "Civil Engineering Building",
+    "description": "Civil and environmental engineering",
+    "aliases": ["civil", "J05"],
+    "tags": ["engineering", "civil", "labs"],
+    "latitude": -33.8888,
+    "longitude": 151.1905
+  },
+  {
+    "id": "electrical-engineering",
+    "name": "Electrical Engineering Building",
+    "description": "Electrical and computer engineering labs",
+    "aliases": ["electrical", "J03"],
+    "tags": ["engineering", "electrical", "labs"],
+    "latitude": -33.8889,
+    "longitude": 151.1901
+  },
+  {
+    "id": "mechanical-engineering",
+    "name": "Mechanical Engineering Building",
+    "description": "Mechanical and aerospace engineering",
+    "aliases": ["mechanical", "J07"],
+    "tags": ["engineering", "mechanical", "labs"],
+    "latitude": -33.8885,
+    "longitude": 151.1908
+  },
+  {
+    "id": "aeronautical-engineering",
+    "name": "Aeronautical Engineering Building",
+    "description": "Aerospace engineering facilities",
+    "aliases": ["aero", "J11"],
+    "tags": ["engineering", "aerospace", "labs"],
+    "latitude": -33.8886,
+    "longitude": 151.1910
+  },
+  {
+    "id": "chemical-engineering",
+    "name": "Chemical Engineering Building",
+    "description": "Chemical and biomolecular engineering",
+    "aliases": ["chemeng", "J01"],
+    "tags": ["engineering", "chemical", "labs"],
+    "latitude": -33.8892,
+    "longitude": 151.1895
+  },
+  {
+    "id": "griffith-taylor",
+    "name": "Griffith Taylor Building",
+    "description": "Geography and environmental science",
+    "aliases": ["griffith taylor", "A19"],
+    "tags": ["geography", "environment", "lectures"],
+    "latitude": -33.8877,
+    "longitude": 151.1879
+  },
+  {
+    "id": "wallace-wurth",
+    "name": "Wallace Wurth Building",
+    "description": "Medical sciences and research",
+    "aliases": ["wallace wurth", "C27"],
+    "tags": ["medical", "research", "science"],
+    "latitude": -33.8900,
+    "longitude": 151.1887
+  },
+  {
+    "id": "blackburn",
+    "name": "Blackburn Building",
+    "description": "Medical and health sciences teaching",
+    "aliases": ["blackburn", "D06"],
+    "tags": ["medical", "health", "lectures"],
+    "latitude": -33.8897,
+    "longitude": 151.1882
+  },
+  {
+    "id": "kopsen",
+    "name": "Kopsen Building",
+    "description": "Medical education and simulation centre",
+    "aliases": ["kopsen"],
+    "tags": ["medical", "education", "simulation"],
+    "latitude": -33.8902,
+    "longitude": 151.1885
+  },
+  {
+    "id": "bosch",
+    "name": "Bosch Building",
+    "description": "Lecture theatres and teaching spaces",
+    "aliases": ["bosch", "1A", "1B", "1C"],
+    "tags": ["lectures", "study"],
+    "latitude": -33.8896,
+    "longitude": 151.1879
+  },
+  {
+    "id": "transient",
+    "name": "Transient Building",
+    "description": "Student services and support",
+    "aliases": ["transient", "F12"],
+    "tags": ["student services", "support"],
+    "latitude": -33.8884,
+    "longitude": 151.1876
+  },
+  {
+    "id": "international-house",
+    "name": "International House",
+    "description": "Student accommodation and community",
+    "aliases": ["international house", "IH"],
+    "tags": ["accommodation", "residential", "international"],
+    "latitude": -33.8863,
+    "longitude": 151.1851
+  },
+  {
+    "id": "st-pauls-college",
+    "name": "St Paul's College",
+    "description": "Residential college",
+    "aliases": ["st pauls", "st paul's"],
+    "tags": ["accommodation", "residential", "college"],
+    "latitude": -33.8866,
+    "longitude": 151.1840
+  },
+  {
+    "id": "st-johns-college",
+    "name": "St John's College",
+    "description": "Residential college",
+    "aliases": ["st johns", "st john's"],
+    "tags": ["accommodation", "residential", "college"],
+    "latitude": -33.8856,
+    "longitude": 151.1854
+  },
+  {
+    "id": "st-andrews-college",
+    "name": "St Andrew's College",
+    "description": "Residential college",
+    "aliases": ["st andrews", "st andrew's"],
+    "tags": ["accommodation", "residential", "college"],
+    "latitude": -33.8871,
+    "longitude": 151.1848
+  },
+  {
+    "id": "wesley-college",
+    "name": "Wesley College",
+    "description": "Residential college",
+    "aliases": ["wesley"],
+    "tags": ["accommodation", "residential", "college"],
+    "latitude": -33.8879,
+    "longitude": 151.1852
+  },
+  {
+    "id": "womens-college",
+    "name": "Women's College",
+    "description": "Residential college for women",
+    "aliases": ["womens", "women's"],
+    "tags": ["accommodation", "residential", "college"],
+    "latitude": -33.8884,
+    "longitude": 151.1851
+  },
+  {
+    "id": "sancta-sophia",
+    "name": "Sancta Sophia College",
+    "description": "Residential college for women",
+    "aliases": ["sancta", "sancta sophia"],
+    "tags": ["accommodation", "residential", "college"],
+    "latitude": -33.8874,
+    "longitude": 151.1856
+  },
+  {
+    "id": "regiment",
+    "name": "The Regiment",
+    "description": "Student accommodation",
+    "aliases": ["regiment"],
+    "tags": ["accommodation", "residential", "student"],
+    "latitude": -33.8895,
+    "longitude": 151.1930
+  },
+  {
+    "id": "abercrombie-precinct",
+    "name": "Abercrombie Business Precinct",
+    "description": "Business school and entrepreneurship hub",
+    "aliases": ["abercrombie"],
+    "tags": ["business", "entrepreneurship", "innovation"],
+    "latitude": -33.8873,
+    "longitude": 151.1912
+  },
+  {
+    "id": "sydney-conservatorium",
+    "name": "Sydney Conservatorium of Music",
+    "description": "Music school and performance venue",
+    "aliases": ["conservatorium", "con", "C41"],
+    "tags": ["music", "performance", "education"],
+    "latitude": -33.8678,
+    "longitude": 151.2151
+  },
+  {
+    "id": "camperdown-commons",
+    "name": "Camperdown Commons",
+    "description": "Food court and dining area",
+    "aliases": ["commons", "food court"],
+    "tags": ["food", "dining", "social"],
+    "latitude": -33.8887,
+    "longitude": 151.1878
+  },
+  {
+    "id": "courtyard",
+    "name": "Courtyard",
+    "description": "Cafe and casual dining",
+    "aliases": ["courtyard cafe"],
+    "tags": ["food", "cafe", "dining"],
+    "latitude": -33.8882,
+    "longitude": 151.1875
+  },
+  {
+    "id": "city-road-cafe",
+    "name": "City Road Cafe",
+    "description": "Cafe and study space",
+    "aliases": ["city road"],
+    "tags": ["food", "cafe", "study"],
+    "latitude": -33.8892,
+    "longitude": 151.1885
+  },
+  {
+    "id": "shortlist-cafe",
+    "name": "Shortlist Cafe",
+    "description": "Cafe in Fisher Library",
+    "aliases": ["shortlist"],
+    "tags": ["food", "cafe", "library"],
+    "latitude": -33.8886,
+    "longitude": 151.1874
+  },
+  {
+    "id": "taste-baguette",
+    "name": "Taste Baguette",
+    "description": "French bakery and cafe",
+    "aliases": ["taste"],
+    "tags": ["food", "cafe", "bakery"],
+    "latitude": -33.8884,
+    "longitude": 151.1896
+  },
+  {
+    "id": "subway",
+    "name": "Subway Eastern Avenue",
+    "description": "Sandwich shop",
+    "aliases": ["subway"],
+    "tags": ["food", "fast food"],
+    "latitude": -33.8882,
+    "longitude": 151.1898
+  },
+  {
+    "id": "yallamundi-lawn",
+    "name": "Yallamundi Lawn",
+    "description": "Open lawn and outdoor space",
+    "aliases": ["yallamundi", "oval"],
+    "tags": ["outdoor", "recreation", "sports"],
+    "latitude": -33.8870,
+    "longitude": 151.1890
+  },
+  {
+    "id": "oval-no-1",
+    "name": "University Oval No. 1",
+    "description": "Sports field and oval",
+    "aliases": ["oval 1", "oval"],
+    "tags": ["sports", "recreation", "field"],
+    "latitude": -33.8905,
+    "longitude": 151.1875
+  },
+  {
+    "id": "tennis-courts",
+    "name": "University Tennis Courts",
+    "description": "Tennis facilities",
+    "aliases": ["tennis"],
+    "tags": ["sports", "tennis", "recreation"],
+    "latitude": -33.8895,
+    "longitude": 151.1842
+  },
+  {
+    "id": "hermann-black",
+    "name": "Hermann Black Gallery",
+    "description": "Art gallery in Architecture building",
+    "aliases": ["hermann black", "gallery"],
+    "tags": ["art", "gallery", "culture"],
+    "latitude": -33.8872,
+    "longitude": 151.1870
+  },
+  {
+    "id": "tin-sheds",
+    "name": "Tin Sheds Gallery",
+    "description": "Contemporary art gallery",
+    "aliases": ["tin sheds"],
+    "tags": ["art", "gallery", "contemporary"],
+    "latitude": -33.8891,
+    "longitude": 151.1869
+  },
+  {
+    "id": "newtown-campus",
+    "name": "Newtown Campus",
+    "description": "Satellite campus in Newtown",
+    "aliases": ["newtown"],
+    "tags": ["campus", "nursing", "health"],
+    "latitude": -33.8940,
+    "longitude": 151.1813
+  },
+  {
+    "id": "mallett-street-campus",
+    "name": "Mallett Street Campus",
+    "description": "Medical and health education campus",
+    "aliases": ["mallett street"],
+    "tags": ["campus", "medical", "health"],
+    "latitude": -33.8906,
+    "longitude": 151.1823
+  },
+  {
+    "id": "medical-foundation",
+    "name": "Medical Foundation Building",
+    "description": "Medical research and facilities",
+    "aliases": ["medical foundation", "K25"],
+    "tags": ["medical", "research", "health"],
+    "latitude": -33.8898,
+    "longitude": 151.1891
+  },
+  {
+    "id": "brain-mind-centre",
+    "name": "Brain and Mind Centre",
+    "description": "Mental health research and treatment",
+    "aliases": ["brain mind", "bmc"],
+    "tags": ["research", "mental health", "medical"],
+    "latitude": -33.8922,
+    "longitude": 151.1828
+  },
+  {
+    "id": "veterinary-science",
+    "name": "Faculty of Veterinary Science",
+    "description": "Veterinary teaching and hospital",
+    "aliases": ["vet science", "B19"],
+    "tags": ["veterinary", "animals", "medical"],
+    "latitude": -33.8893,
+    "longitude": 151.1932
+  },
+  {
+    "id": "gunn-building",
+    "name": "RMC Gunn Building",
+    "description": "Veterinary and agricultural sciences",
+    "aliases": ["gunn", "B19"],
+    "tags": ["veterinary", "agriculture", "science"],
+    "latitude": -33.8895,
+    "longitude": 151.1928
+  },
+  {
+    "id": "camden-campus",
+    "name": "Camden Campus",
+    "description": "Agriculture and veterinary campus in Camden",
+    "aliases": ["camden"],
+    "tags": ["campus", "agriculture", "veterinary"],
+    "latitude": -34.0594,
+    "longitude": 150.6948
+  },
+  {
+    "id": "raglan-street",
+    "name": "Raglan Street Building",
+    "description": "Student accommodation offices",
+    "aliases": ["raglan"],
+    "tags": ["accommodation", "student services"],
+    "latitude": -33.8908,
+    "longitude": 151.1838
   }
 ]

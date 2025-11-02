@@ -4,14 +4,13 @@ import asyncio
 import logging
 import subprocess
 import time
-from typing import Any
 
 from pydantic import BaseModel, Field
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
 from app.schemas.code import CodeAnalysis, OutputAnalysis
-from app.services.llm import LLMService, LLMResult
+from app.services.llm import LLMService
 from app.utils.metrics import emit_metric, time_metric
 
 logger = logging.getLogger(__name__)
@@ -66,7 +65,7 @@ Return your response in this format:
             ("human", "{prompt}")
         ])
 
-        llm = self._llm._llm.bind(temperature=0.3)  # type: ignore[attr-defined]
+        llm = self._llm._llm.bind(temperature=0.3)  # type: ignore[attr-defined,union-attr]
         chain = prompt_template | llm | parser
         
         result = await chain.ainvoke({
@@ -300,7 +299,7 @@ Return your analysis in this format:
             ("human", "Language: {language}\n\nCode:\n```\n{code}\n```")
         ])
 
-        llm = self._llm._llm.bind(temperature=0.2)  # type: ignore[attr-defined]
+        llm = self._llm._llm.bind(temperature=0.2)  # type: ignore[attr-defined,union-attr]
         chain = prompt_template | llm | parser
         
         result = await chain.ainvoke({
@@ -309,7 +308,7 @@ Return your analysis in this format:
             "format_instructions": format_instructions
         })
         
-        return result  # type: ignore[return-value]
+        return result  # type: ignore[no-any-return]  # type: ignore[return-value]
 
     async def _analyze_output(
         self, code: str, language: str, output: str, error: str | None, success: bool
@@ -347,7 +346,7 @@ Execution Result:
             ("human", "{execution_details}")
         ])
 
-        llm = self._llm._llm.bind(temperature=0.3)  # type: ignore[attr-defined]
+        llm = self._llm._llm.bind(temperature=0.3)  # type: ignore[attr-defined,union-attr]
         chain = prompt_template | llm | parser
         
         result = await chain.ainvoke({
@@ -355,7 +354,7 @@ Execution Result:
             "format_instructions": format_instructions
         })
         
-        return result  # type: ignore[return-value]
+        return result  # type: ignore[return-value,no-any-return]
 
     def _fallback_pre_analysis(self) -> CodeAnalysis:
         """Fallback pre-analysis when LLM is unavailable"""

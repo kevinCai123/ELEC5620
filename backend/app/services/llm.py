@@ -4,9 +4,7 @@ import logging
 import os
 from dataclasses import dataclass
 from typing import Any, Callable, List, Optional, cast
-from zoneinfo import ZoneInfo
 
-import dateparser
 from pydantic import BaseModel, Field
 from rapidfuzz import fuzz
 
@@ -441,11 +439,7 @@ Input state: {truncated_notice}"""
             SummarySection(heading="Implications & Next Steps", bullets=implications[:3]),
         ]
         # Ensure qna_seeds is empty/absent depending on schema. If SummaryNote requires the field, set to [].
-        try:
-            return SummaryNote(tldr=tldr[:200], sections=sections, qna_seeds=[])
-        except TypeError:
-            # If schema doesn't accept qna_seeds anymore
-            return SummaryNote(tldr=tldr[:200], sections=sections)
+        return SummaryNote(tldr=tldr[:200], sections=sections, qna_seeds=[])
 
     def _fallback_quiz(self, text: str) -> list[QuizItem]:
         template_pool = [

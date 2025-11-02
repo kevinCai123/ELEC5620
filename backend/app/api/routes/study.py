@@ -102,7 +102,7 @@ def _build_plan_calendar(
         event.add("attendee", attendee)
         calendar.add_component(event)
 
-    return calendar.to_ical().decode("utf-8")
+    return calendar.to_ical().decode("utf-8")  # type: ignore[no-any-return]
 
 
 def build_plan_update_calendar(
