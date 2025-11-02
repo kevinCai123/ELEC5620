@@ -4,7 +4,6 @@ version = "0.1.0"
 description = "Study companion backend for ELEC5620 Group 78"
 authors = ["Group 78 <team@example.com>"]
 packages = [{ include = "app" }]
-readme = "../README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
