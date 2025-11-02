@@ -483,8 +483,9 @@ class DigestService:
                 key_points = items[idx]["key_points"][:1]
                 if key_points:
                     highlights.extend(key_points)
-                if items[idx]["summary"]:
-                    highlights.append(items[idx]["summary"][:120])
+                summary = items[idx]["summary"]
+                if summary:
+                    highlights.append(str(summary)[:120])
             highlight_text = clamp_uniq(highlights, 2)
             card = f"{representative} — {count} email{'s' if count > 1 else ''}"
             if highlight_text:
