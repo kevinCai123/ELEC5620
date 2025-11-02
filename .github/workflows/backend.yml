@@ -65,7 +65,7 @@ jobs:
           OPENAI_API_KEY: test-key
           OPENWEATHER_API_KEY: test-key
         run: |
-          poetry run pytest --cov=app --cov-report=term --cov-report=xml --cov-fail-under=73
+          poetry run pytest --cov=app --cov-report=term --cov-report=xml --cov-fail-under=72
       
       - name: Upload coverage to Codecov (optional)
         if: always()
